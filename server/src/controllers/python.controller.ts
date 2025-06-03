@@ -114,7 +114,7 @@ export const installPackage = async (ctx: any) => {
     
     // 拆分包规格为数组
     const parts = packageSpec.split(' ');
-    const args = ['-m', 'pip', 'install', ...parts];
+    const args = ['-m', 'pip', 'install', '--user', ...parts];
     
     const output = await runPythonCommand(args);
     return ctx.body = { success: true, message: '安装成功', output };
