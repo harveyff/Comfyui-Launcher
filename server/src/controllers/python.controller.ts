@@ -266,7 +266,7 @@ export const fixPluginDependencies = async (ctx: any) => {
     }
     
     // 使用pip安装requirements.txt
-    const output = await runPythonCommand(['-m', 'pip', 'install', '-r', requirementsPath]);
+    const output = await runPythonCommand(['-m', 'pip', 'install', '--user', '-r', requirementsPath]);
     
     return ctx.body = {
       success: true,

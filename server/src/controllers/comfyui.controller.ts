@@ -18,7 +18,7 @@ const RESET_LOG_PATH = path.join(process.cwd(), 'logs');
 const RESET_LOG_FILE = path.join(RESET_LOG_PATH, 'comfyui-reset.log');
 
 // 程序版本号常量
-const APP_VERSION = '0.1.0';
+const APP_VERSION = '0.1.2';
 
 export class ComfyUIController {
   private comfyProcess: ChildProcess | null = null;
