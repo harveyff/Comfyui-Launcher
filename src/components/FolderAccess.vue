@@ -52,11 +52,11 @@ export default defineComponent({
     const { t } = useI18n();
     const isInIframe = ref(false);
     const folders = ref([ 
-      { name: t('folderAccess.rootDir'), path: '/Files/External/ai/comfyui/ComfyUI/', used: null, available: null, hint: t('folderAccess.rootDirHint') }, 
-      { name: t('folderAccess.pluginDir'), path: '/Files/External/ai/comfyui/ComfyUI/custom_nodes/', used: '', available: '', hint: null }, 
-      { name: t('folderAccess.modelDir'), path: '/Files/External/ai/model/', used: '', available: '', hint: null }, 
-      { name: t('folderAccess.outputDir'), path: '/Files/External/ai/output/comfyui/', used: null, available: null, hint: t('folderAccess.outputDirHint') }, 
-      { name: t('folderAccess.inputDir'), path: '/Files/External/ai/comfyui/ComfyUI/input/', used: null, available: null, hint: t('folderAccess.inputDirHint') }, 
+      { name: t('folderAccess.rootDir'), path: '/Files/External/olares/ai/comfyui/ComfyUI/', used: null, available: null, hint: t('folderAccess.rootDirHint') }, 
+      { name: t('folderAccess.pluginDir'), path: '/Files/External/olares/ai/comfyui/ComfyUI/custom_nodes/', used: '', available: '', hint: null }, 
+      { name: t('folderAccess.modelDir'), path: '/Files/External/olares/ai/model/', used: '', available: '', hint: null }, 
+      { name: t('folderAccess.outputDir'), path: '/Files/External/olares/ai/output/comfyui/', used: null, available: null, hint: t('folderAccess.outputDirHint') }, 
+      { name: t('folderAccess.inputDir'), path: '/Files/External/olares/ai/comfyui/ComfyUI/input/', used: null, available: null, hint: t('folderAccess.inputDirHint') }, 
     ]); 
 
     const fetchData = async () => { 

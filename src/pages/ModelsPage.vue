@@ -106,7 +106,7 @@ export default defineComponent({
     
     // 修改打开模型文件夹的方法
     const openModelFolder = async () => {
-      const modelPath = '/Files/External/ai/model/';
+      const modelPath = '/Files/External/olares/ai/model/';
       console.log('Opening model folder:', modelPath);
       
       try {

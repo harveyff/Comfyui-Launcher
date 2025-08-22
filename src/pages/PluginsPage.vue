@@ -781,7 +781,7 @@ onMounted(() => {
 
 // 修改打开插件目录方法
 const openPluginsFolder = async () => {
-  const pluginsPath = '/Files/External/ai/comfyui/ComfyUI/custom_nodes/';
+  const pluginsPath = '/Files/External/olares/ai/comfyui/ComfyUI/custom_nodes/';
   console.log('Opening plugins folder:', pluginsPath);
   
   try {
