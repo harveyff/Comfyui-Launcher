@@ -1,5 +1,437 @@
 [
   {
+    "id": "36157e1e-13d6-45fe-96c4-c4673a620a0b",
+    "pluginId": "ComfyUI-nunchaku",
+    "type": "install",
+    "startTime": 1746704228452,
+    "status": "success",
+    "logs": [
+      "[5/8/2025, 7:37:08 PM] 开始安装插件 ComfyUI-nunchaku",
+      "[5/8/2025, 7:37:08 PM] 开始从资源包安装插件: https://github.com/mit-han-lab/ComfyUI-nunchaku (分支: main)",
+      "[5/8/2025, 7:37:08 PM] 正在下载插件...",
+      "[5/8/2025, 7:37:08 PM] 执行: git clone --branch main \"http://gh-proxy.com/https://github.com/mit-han-lab/ComfyUI-nunchaku\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/ComfyUI-nunchaku\"",
+      "[5/8/2025, 7:37:11 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/ComfyUI-nunchaku'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/mit-han-lab/ComfyUI-nunchaku/\n",
+      "[5/8/2025, 7:37:11 PM] 开发环境：跳过依赖安装",
+      "[5/8/2025, 7:37:11 PM] 插件安装完成于 5/8/2025, 7:37:11 PM"
+    ],
+    "endTime": 1746704231472,
+    "result": "从GitHub安装完成: https://github.com/mit-han-lab/ComfyUI-nunchaku"
+  },
+  {
+    "id": "ef9d2eb2-3bd6-428d-acc6-f2fcbca115e2",
+    "pluginId": "comfyui-impact-pack",
+    "pluginName": "ComfyUI Impact Pack",
+    "type": "enable",
+    "startTime": 1744951619384,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:59 PM] 开始启用插件 comfyui-impact-pack",
+      "[4/18/2025, 12:46:59 PM] 准备启用...",
+      "[4/18/2025, 12:46:59 PM] 正在移动插件到启用目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/.disabled/comfyui-impact-pack -> /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack",
+      "[4/18/2025, 12:46:59 PM] 启用完成于 4/18/2025, 12:46:59 PM"
+    ],
+    "endTime": 1744951619388,
+    "result": "启用完成于 4/18/2025, 12:46:59 PM"
+  },
+  {
+    "id": "217e80b3-3d8b-494c-a437-7f965b1e8aa3",
+    "pluginId": "comfyui-impact-pack",
+    "pluginName": "ComfyUI Impact Pack",
+    "type": "disable",
+    "startTime": 1744951617395,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:57 PM] 开始禁用插件 comfyui-impact-pack",
+      "[4/18/2025, 12:46:57 PM] 准备禁用...",
+      "[4/18/2025, 12:46:57 PM] 正在移动插件到禁用目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack -> /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/.disabled/comfyui-impact-pack",
+      "[4/18/2025, 12:46:57 PM] 禁用完成于 4/18/2025, 12:46:57 PM"
+    ],
+    "endTime": 1744951617397,
+    "result": "禁用完成于 4/18/2025, 12:46:57 PM"
+  },
+  {
+    "id": "307ea520-ce6f-4fa8-a720-e9c16be7e49c",
+    "pluginId": "comfyui-impact-pack",
+    "pluginName": "ComfyUI Impact Pack",
+    "type": "install",
+    "startTime": 1744951603393,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:43 PM] 开始安装插件 comfyui-impact-pack",
+      "[4/18/2025, 12:46:43 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:46:43 PM] 找到插件: {\"id\":\"comfyui-impact-pack\",\"name\":\"ComfyUI Impact Pack\",\"description\":\"This node pack offers various detector nodes and detailer nodes that allow you to configure a workflow that automatically enhances facial details. And provide iterative upscaler.\\nNOTE: To use the UltralyticsDetectorProvider, you must install the 'ComfyUI Impact Subpack' separately.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Pack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false,\"installedOn\":\"2025-04-18T04:44:30.754Z\"}",
+      "[4/18/2025, 12:46:43 PM] 准备安装...",
+      "[4/18/2025, 12:46:43 PM] 正在下载插件...",
+      "[4/18/2025, 12:46:43 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Pack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack\"",
+      "[4/18/2025, 12:46:54 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Pack/\n",
+      "[4/18/2025, 12:46:54 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:46:54 PM] 安装完成于 4/18/2025, 12:46:54 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951614870,
+    "result": "安装完成于 4/18/2025, 12:46:54 PM"
+  },
+  {
+    "id": "b4e4dd5b-41b2-47e1-922c-05ceb4a26fa4",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "uninstall",
+    "startTime": 1744951600920,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:40 PM] 开始卸载插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:46:40 PM] 准备卸载...",
+      "[4/18/2025, 12:46:40 PM] 正在卸载插件...",
+      "[4/18/2025, 12:46:40 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack",
+      "[4/18/2025, 12:46:40 PM] 清理临时文件...",
+      "[4/18/2025, 12:46:40 PM] 卸载完成于 4/18/2025, 12:46:40 PM"
+    ],
+    "endTime": 1744951600934,
+    "result": "卸载完成于 4/18/2025, 12:46:40 PM"
+  },
+  {
+    "id": "9723acfb-395c-45b2-afbe-2f056ec6d7f4",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "install",
+    "startTime": 1744951595782,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:35 PM] 开始安装插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:46:35 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:46:35 PM] 找到插件: {\"id\":\"comfyui-impact-subpack\",\"name\":\"ComfyUI Impact Subpack\",\"description\":\"This node pack provides nodes that complement the Impact Pack, such as the UltralyticsDetectorProvider.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Subpack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false,\"installedOn\":\"2025-04-18T04:46:28.644Z\"}",
+      "[4/18/2025, 12:46:35 PM] 准备安装...",
+      "[4/18/2025, 12:46:35 PM] 正在下载插件...",
+      "[4/18/2025, 12:46:35 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"",
+      "[4/18/2025, 12:46:39 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack/\n",
+      "[4/18/2025, 12:46:39 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:46:39 PM] 安装完成于 4/18/2025, 12:46:39 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951599317,
+    "result": "安装完成于 4/18/2025, 12:46:39 PM"
+  },
+  {
+    "id": "4c2d62cf-31c8-4ed7-a289-829908650d4d",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "uninstall",
+    "startTime": 1744951594586,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:34 PM] 开始卸载插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:46:34 PM] 准备卸载...",
+      "[4/18/2025, 12:46:34 PM] 正在卸载插件...",
+      "[4/18/2025, 12:46:34 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack",
+      "[4/18/2025, 12:46:34 PM] 清理临时文件...",
+      "[4/18/2025, 12:46:34 PM] 卸载完成于 4/18/2025, 12:46:34 PM"
+    ],
+    "endTime": 1744951594595,
+    "result": "卸载完成于 4/18/2025, 12:46:34 PM"
+  },
+  {
+    "id": "e171461b-8073-4d6c-a663-990ee57f2847",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "install",
+    "startTime": 1744951588617,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:46:28 PM] 开始安装插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:46:28 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:46:28 PM] 找到插件: {\"id\":\"comfyui-impact-subpack\",\"name\":\"ComfyUI Impact Subpack\",\"description\":\"This node pack provides nodes that complement the Impact Pack, such as the UltralyticsDetectorProvider.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Subpack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false,\"installedOn\":\"2025-04-18T04:45:23.513Z\"}",
+      "[4/18/2025, 12:46:28 PM] 准备安装...",
+      "[4/18/2025, 12:46:28 PM] 正在下载插件...",
+      "[4/18/2025, 12:46:28 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"",
+      "[4/18/2025, 12:46:31 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack/\n",
+      "[4/18/2025, 12:46:31 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:46:31 PM] 安装完成于 4/18/2025, 12:46:31 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951591703,
+    "result": "安装完成于 4/18/2025, 12:46:31 PM"
+  },
+  {
+    "id": "157501b2-963f-488f-bd5f-ec4be4e1a412",
+    "pluginId": "inspire",
+    "pluginName": "ComfyUI Inspire Pack",
+    "type": "uninstall",
+    "startTime": 1744951531954,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:45:31 PM] 开始卸载插件 inspire",
+      "[4/18/2025, 12:45:31 PM] 准备卸载...",
+      "[4/18/2025, 12:45:31 PM] 正在卸载插件...",
+      "[4/18/2025, 12:45:31 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/inspire",
+      "[4/18/2025, 12:45:31 PM] 清理临时文件...",
+      "[4/18/2025, 12:45:31 PM] 卸载完成于 4/18/2025, 12:45:31 PM"
+    ],
+    "endTime": 1744951531965,
+    "result": "卸载完成于 4/18/2025, 12:45:31 PM"
+  },
+  {
+    "id": "97a15019-7c1b-4ba4-98a1-2b739e53a77a",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "uninstall",
+    "startTime": 1744951529127,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:45:29 PM] 开始卸载插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:45:29 PM] 准备卸载...",
+      "[4/18/2025, 12:45:29 PM] 正在卸载插件...",
+      "[4/18/2025, 12:45:29 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack",
+      "[4/18/2025, 12:45:29 PM] 清理临时文件...",
+      "[4/18/2025, 12:45:29 PM] 卸载完成于 4/18/2025, 12:45:29 PM"
+    ],
+    "endTime": 1744951529143,
+    "result": "卸载完成于 4/18/2025, 12:45:29 PM"
+  },
+  {
+    "id": "c8cf7c7c-e3c3-4e99-afde-77a89a19c4f1",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "install",
+    "startTime": 1744951523457,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:45:23 PM] 开始安装插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:45:23 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:45:23 PM] 找到插件: {\"id\":\"comfyui-impact-subpack\",\"name\":\"ComfyUI Impact Subpack\",\"description\":\"This node pack provides nodes that complement the Impact Pack, such as the UltralyticsDetectorProvider.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Subpack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false,\"installedOn\":\"2025-04-18T04:42:16.001Z\"}",
+      "[4/18/2025, 12:45:23 PM] 准备安装...",
+      "[4/18/2025, 12:45:23 PM] 正在下载插件...",
+      "[4/18/2025, 12:45:23 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"",
+      "[4/18/2025, 12:45:27 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack/\n",
+      "[4/18/2025, 12:45:27 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:45:27 PM] 安装完成于 4/18/2025, 12:45:27 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951527098,
+    "result": "安装完成于 4/18/2025, 12:45:27 PM"
+  },
+  {
+    "id": "e70c94cc-5835-4e55-88ba-a8283ad865bb",
+    "pluginId": "inspire",
+    "pluginName": "ComfyUI Inspire Pack",
+    "type": "install",
+    "startTime": 1744951497323,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:44:57 PM] 开始安装插件 inspire",
+      "[4/18/2025, 12:44:57 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:44:57 PM] 找到插件: {\"id\":\"inspire\",\"name\":\"ComfyUI Inspire Pack\",\"description\":\"This extension provides various nodes to support Lora Block Weight and the Impact Pack. Provides many easily applicable regional features and applications for Variation Seed.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Inspire-Pack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false,\"installedOn\":\"2025-04-18T04:17:07.542Z\"}",
+      "[4/18/2025, 12:44:57 PM] 准备安装...",
+      "[4/18/2025, 12:44:57 PM] 正在下载插件...",
+      "[4/18/2025, 12:44:57 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Inspire-Pack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/inspire\"",
+      "[4/18/2025, 12:45:00 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/inspire'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Inspire-Pack/\n",
+      "[4/18/2025, 12:45:00 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:45:00 PM] 安装完成于 4/18/2025, 12:45:00 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951500793,
+    "result": "安装完成于 4/18/2025, 12:45:00 PM"
+  },
+  {
+    "id": "6a4e1035-bfe9-4727-980b-a3c8ae5a6ec4",
+    "pluginId": "comfyui-impact-pack",
+    "pluginName": "ComfyUI Impact Pack",
+    "type": "uninstall",
+    "startTime": 1744951494175,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:44:54 PM] 开始卸载插件 comfyui-impact-pack",
+      "[4/18/2025, 12:44:54 PM] 准备卸载...",
+      "[4/18/2025, 12:44:54 PM] 正在卸载插件...",
+      "[4/18/2025, 12:44:54 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack",
+      "[4/18/2025, 12:44:54 PM] 清理临时文件...",
+      "[4/18/2025, 12:44:54 PM] 卸载完成于 4/18/2025, 12:44:54 PM"
+    ],
+    "endTime": 1744951494200,
+    "result": "卸载完成于 4/18/2025, 12:44:54 PM"
+  },
+  {
+    "id": "99e4adc0-2f74-4efa-8a3a-4b72a19cfe6d",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "uninstall",
+    "startTime": 1744951485506,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:44:45 PM] 开始卸载插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:44:45 PM] 准备卸载...",
+      "[4/18/2025, 12:44:45 PM] 正在卸载插件...",
+      "[4/18/2025, 12:44:45 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack",
+      "[4/18/2025, 12:44:45 PM] 清理临时文件...",
+      "[4/18/2025, 12:44:45 PM] 卸载完成于 4/18/2025, 12:44:45 PM"
+    ],
+    "endTime": 1744951485528,
+    "result": "卸载完成于 4/18/2025, 12:44:45 PM"
+  },
+  {
+    "id": "3b9cf892-c7e2-4378-9f28-304128a76559",
+    "pluginId": "comfyui-impact-pack",
+    "pluginName": "ComfyUI Impact Pack",
+    "type": "install",
+    "startTime": 1744951470710,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:44:30 PM] 开始安装插件 comfyui-impact-pack",
+      "[4/18/2025, 12:44:30 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:44:30 PM] 找到插件: {\"id\":\"comfyui-impact-pack\",\"name\":\"ComfyUI Impact Pack\",\"description\":\"This node pack offers various detector nodes and detailer nodes that allow you to configure a workflow that automatically enhances facial details. And provide iterative upscaler.\\nNOTE: To use the UltralyticsDetectorProvider, you must install the 'ComfyUI Impact Subpack' separately.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Pack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false}",
+      "[4/18/2025, 12:44:30 PM] 准备安装...",
+      "[4/18/2025, 12:44:30 PM] 正在下载插件...",
+      "[4/18/2025, 12:44:30 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Pack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack\"",
+      "[4/18/2025, 12:44:41 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-pack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Pack/\n",
+      "[4/18/2025, 12:44:41 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:44:41 PM] 安装完成于 4/18/2025, 12:44:41 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951481562,
+    "result": "安装完成于 4/18/2025, 12:44:41 PM"
+  },
+  {
+    "id": "9b7dfb71-3451-4983-8013-acd2fce2588b",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "install",
+    "startTime": 1744951335965,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:42:15 PM] 开始安装插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:42:15 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:42:15 PM] 找到插件: {\"id\":\"comfyui-impact-subpack\",\"name\":\"ComfyUI Impact Subpack\",\"description\":\"This node pack provides nodes that complement the Impact Pack, such as the UltralyticsDetectorProvider.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Subpack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false,\"installedOn\":\"2025-04-18T04:29:20.811Z\"}",
+      "[4/18/2025, 12:42:15 PM] 准备安装...",
+      "[4/18/2025, 12:42:15 PM] 正在下载插件...",
+      "[4/18/2025, 12:42:15 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"",
+      "[4/18/2025, 12:42:19 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack/\n",
+      "[4/18/2025, 12:42:19 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:42:19 PM] 安装完成于 4/18/2025, 12:42:19 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744951339257,
+    "result": "安装完成于 4/18/2025, 12:42:19 PM"
+  },
+  {
+    "id": "cc52b33f-b637-4e1a-9592-2e5ca5531b81",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "uninstall",
+    "startTime": 1744950883096,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:34:43 PM] 开始卸载插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:34:43 PM] 准备卸载...",
+      "[4/18/2025, 12:34:43 PM] 正在卸载插件...",
+      "[4/18/2025, 12:34:43 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack",
+      "[4/18/2025, 12:34:43 PM] 清理临时文件...",
+      "[4/18/2025, 12:34:43 PM] 卸载完成于 4/18/2025, 12:34:43 PM"
+    ],
+    "endTime": 1744950883139,
+    "result": "卸载完成于 4/18/2025, 12:34:43 PM"
+  },
+  {
+    "id": "57d5a169-12e1-4105-876a-a2f60d285efe",
+    "pluginId": "comfyui-impact-subpack",
+    "pluginName": "ComfyUI Impact Subpack",
+    "type": "install",
+    "startTime": 1744950560751,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:29:20 PM] 开始安装插件 comfyui-impact-subpack",
+      "[4/18/2025, 12:29:20 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:29:20 PM] 找到插件: {\"id\":\"comfyui-impact-subpack\",\"name\":\"ComfyUI Impact Subpack\",\"description\":\"This node pack provides nodes that complement the Impact Pack, such as the UltralyticsDetectorProvider.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Impact-Subpack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false}",
+      "[4/18/2025, 12:29:20 PM] 准备安装...",
+      "[4/18/2025, 12:29:20 PM] 正在下载插件...",
+      "[4/18/2025, 12:29:20 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"",
+      "[4/18/2025, 12:29:24 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Impact-Subpack/\n",
+      "[4/18/2025, 12:29:24 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:29:24 PM] 安装完成于 4/18/2025, 12:29:24 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744950564606,
+    "result": "安装完成于 4/18/2025, 12:29:24 PM"
+  },
+  {
+    "id": "09aae220-7d01-4a07-8ded-3af29c4e9909",
+    "pluginId": "inspire",
+    "pluginName": "ComfyUI Inspire Pack",
+    "type": "uninstall",
+    "startTime": 1744950258293,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:24:18 PM] 开始卸载插件 inspire",
+      "[4/18/2025, 12:24:18 PM] 准备卸载...",
+      "[4/18/2025, 12:24:18 PM] 正在卸载插件...",
+      "[4/18/2025, 12:24:18 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/inspire",
+      "[4/18/2025, 12:24:18 PM] 清理临时文件...",
+      "[4/18/2025, 12:24:18 PM] 卸载完成于 4/18/2025, 12:24:18 PM"
+    ],
+    "endTime": 1744950258309,
+    "result": "卸载完成于 4/18/2025, 12:24:18 PM"
+  },
+  {
+    "id": "162c3cce-884f-4a3c-96ac-557bfcf13f36",
+    "pluginId": "connection-helper",
+    "pluginName": "ComfyUI Connection Helper",
+    "type": "uninstall",
+    "startTime": 1744950019538,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:20:19 PM] 开始卸载插件 connection-helper",
+      "[4/18/2025, 12:20:19 PM] 准备卸载...",
+      "[4/18/2025, 12:20:19 PM] 正在卸载插件...",
+      "[4/18/2025, 12:20:19 PM] 已删除插件目录: /Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/connection-helper",
+      "[4/18/2025, 12:20:19 PM] 清理临时文件...",
+      "[4/18/2025, 12:20:19 PM] 卸载完成于 4/18/2025, 12:20:19 PM"
+    ],
+    "endTime": 1744950019555,
+    "result": "卸载完成于 4/18/2025, 12:20:19 PM"
+  },
+  {
+    "id": "f0b9ff86-fdc7-415e-ad7a-5567c0900ee7",
+    "pluginId": "connection-helper",
+    "pluginName": "ComfyUI Connection Helper",
+    "type": "install",
+    "startTime": 1744949944101,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:19:04 PM] 开始安装插件 connection-helper",
+      "[4/18/2025, 12:19:04 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:19:04 PM] 找到插件: {\"id\":\"connection-helper\",\"name\":\"ComfyUI Connection Helper\",\"description\":\"This is a helper extension for ComfyUI that assists with node connections.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/comfyui-connection-helper\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false}",
+      "[4/18/2025, 12:19:04 PM] 准备安装...",
+      "[4/18/2025, 12:19:04 PM] 正在下载插件...",
+      "[4/18/2025, 12:19:04 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/comfyui-connection-helper\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/connection-helper\"",
+      "[4/18/2025, 12:19:08 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/connection-helper'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/comfyui-connection-helper/\n",
+      "[4/18/2025, 12:19:08 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:19:08 PM] 安装完成于 4/18/2025, 12:19:08 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744949948971,
+    "result": "安装完成于 4/18/2025, 12:19:08 PM"
+  },
+  {
+    "id": "cf556cfe-151e-4cb0-9eb4-8eaa169165a8",
+    "pluginId": "inspire",
+    "pluginName": "ComfyUI Inspire Pack",
+    "type": "install",
+    "startTime": 1744949827458,
+    "status": "success",
+    "logs": [
+      "[4/18/2025, 12:17:07 PM] 开始安装插件 inspire",
+      "[4/18/2025, 12:17:07 PM] 正在查找插件信息...",
+      "[4/18/2025, 12:17:07 PM] 找到插件: {\"id\":\"inspire\",\"name\":\"ComfyUI Inspire Pack\",\"description\":\"This extension provides various nodes to support Lora Block Weight and the Impact Pack. Provides many easily applicable regional features and applications for Variation Seed.\",\"version\":\"未知\",\"author\":\"Dr.Lt.Data\",\"github\":\"https://github.com/ltdrdata/ComfyUI-Inspire-Pack\",\"install_type\":\"git-clone\",\"tags\":[],\"stars\":0,\"installed\":false,\"disabled\":false}",
+      "[4/18/2025, 12:17:07 PM] 准备安装...",
+      "[4/18/2025, 12:17:07 PM] 正在下载插件...",
+      "[4/18/2025, 12:17:07 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Inspire-Pack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/inspire\"",
+      "[4/18/2025, 12:17:11 PM] Git错误: Cloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/inspire'...\nwarning: redirecting to https://gh-proxy.com/https://github.com/ltdrdata/ComfyUI-Inspire-Pack/\n",
+      "[4/18/2025, 12:17:11 PM] 开发环境：跳过依赖安装",
+      "[4/18/2025, 12:17:11 PM] 安装完成于 4/18/2025, 12:17:11 PM"
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/",
+    "endTime": 1744949831940,
+    "result": "安装完成于 4/18/2025, 12:17:11 PM"
+  },
+  {
     "id": "6a6b8252-e79b-405d-b690-9c1a1c6d0cbd",
     "pluginId": "was",
     "pluginName": "WAS Node Suite",

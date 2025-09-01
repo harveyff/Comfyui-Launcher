@@ -7,7 +7,7 @@ import { exec, execSync } from 'child_process';
 import * as util from 'util';
 import * as os from 'os';
 import logger, { i18nLogger } from '../utils/logger';
-import { SystemController } from './system.controller';
+import { SystemController } from './system/system.controller';
 
 // 将exec转换为Promise
 const execPromise = util.promisify(exec);

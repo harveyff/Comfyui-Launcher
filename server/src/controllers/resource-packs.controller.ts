@@ -12,7 +12,7 @@ import { EssentialModel, DownloadProgress } from '../types/models.types';
 import { logger } from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';
 import { downloadFile } from '../utils/download.utils';
-import { SystemController } from './system.controller';
+import { SystemController } from './system/system.controller';
 
 // 资源类型枚举
 export enum ResourceType {

@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DownloadController } from './download.controller';
 import { Model, DownloadProgress, EssentialModel } from '../types/models.types';
 import { essentialModels } from './essential-models.controller';
-import { SystemController } from './system.controller';  // 导入SystemController
+import { SystemController } from './system/system.controller';  // 导入SystemController
 
 // 必要模型接口定义
 

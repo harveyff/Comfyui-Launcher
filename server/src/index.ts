@@ -5,7 +5,7 @@ import cors from '@koa/cors';
 import { ComfyUIController, createComfyUIProxy } from './controllers/comfyui.controller';
 import { ModelsController } from './controllers/models.controller';
 import { PluginsController } from './controllers/plugins.controller';
-import { SystemController } from './controllers/system.controller';
+import { SystemController } from './controllers/system/system.controller';
 import { EssentialModelsController } from './controllers/essential-models.controller';
 import { ResourcePacksController } from './controllers/resource-packs.controller';
 import { config } from './config';
@@ -18,7 +18,7 @@ import {
   analyzePluginDependencies,
   fixPluginDependencies
 } from './controllers/python.controller';
-import civitaiController from './controllers/civitai.controller';
+import civitaiController from './controllers/civitai/civitai.controller';
 // 导入增强的日志记录工具
 import logger, { i18nLogger } from './utils/logger';
 
