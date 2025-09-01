@@ -336,6 +336,14 @@ export class SystemController {
   }
 
   /**
+   * 获取环境配置
+   * @returns 环境配置对象
+   */
+  public getEnvironmentConfig(): any {
+    return this.environmentConfigurator.getEnvironmentConfig();
+  }
+
+  /**
    * 获取当前网络配置
    * @param ctx Koa上下文
    */

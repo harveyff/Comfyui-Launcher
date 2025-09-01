@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import { ComfyUIController, createComfyUIProxy } from './controllers/comfyui.controller';
-import { ModelsController } from './controllers/models.controller';
+import { ModelsController } from './controllers/models/models.controller';
 import { PluginsController } from './controllers/plugin/plugins.controller';
 import { SystemController } from './controllers/system/system.controller';
 import { EssentialModelsController } from './controllers/essential-models.controller';
