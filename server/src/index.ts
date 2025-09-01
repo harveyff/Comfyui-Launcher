@@ -4,7 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import { ComfyUIController, createComfyUIProxy } from './controllers/comfyui.controller';
 import { ModelsController } from './controllers/models.controller';
-import { PluginsController } from './controllers/plugins.controller';
+import { PluginsController } from './controllers/plugin/plugins.controller';
 import { SystemController } from './controllers/system/system.controller';
 import { EssentialModelsController } from './controllers/essential-models.controller';
 import { ResourcePacksController } from './controllers/resource-packs.controller';

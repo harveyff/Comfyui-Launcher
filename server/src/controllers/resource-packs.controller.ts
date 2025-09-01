@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { DownloadController } from './download.controller';
 import { ModelsController } from './models.controller';
-import { PluginsController } from './plugins.controller';
+import { PluginsController } from './plugin/plugins.controller';
 import { EssentialModel, DownloadProgress } from '../types/models.types';
 import { logger } from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';

@@ -2,9 +2,9 @@ import { Context } from 'koa';
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { PluginsController } from './plugins.controller';
-import { pythonPath } from '../config';
-import { execPromise } from '../utils/execPromise';
+import { PluginsController } from '../plugin/plugins.controller';
+import { pythonPath } from '../../config';
+import { execPromise } from '../../utils/execPromise';
 
 // 配置文件路径
 const PIP_CONFIG_FILE = path.join(process.cwd(), 'pip.conf');
