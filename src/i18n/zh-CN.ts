@@ -278,7 +278,10 @@ export default {
     controlNetPackage: 'ControlNet模型包',
     controlNetModelsDesc: '包含 ControlNet 所需全部模型',
     framePackPackage: 'FramePack视频生成模型包',
-    framePackModelsDesc: '包含生成视频所需的核心模型和工作流'
+    framePackModelsDesc: '包含生成视频所需的核心模型和工作流',
+    notifications: {
+      essentialModelsInstalled: '基础模型安装完成！'
+    }
   },
   installedModelsCard: {
     installedModels: '已安装模型',
@@ -729,7 +732,27 @@ export default {
       canceled: '已取消',
       unknown: '未知'
     },
-    unknownError: '未知错误'
+    unknownError: '未知错误',
+    time: {
+      hours: '{count}小时',
+      minutes: '{count}分钟',
+      seconds: '{count}秒'
+    },
+    downloadSource: {
+      title: '下载源',
+      options: {
+        default: '默认源',
+        china: '国内源'
+      }
+    },
+    notifications: {
+      startInstall: '开始安装资源包 {name}',
+      installComplete: '资源包 {name} 安装完成',
+      installFailed: '安装资源包失败{suffix}',
+      cancelSent: '取消安装操作已发送',
+      cancelFailed: '取消安装失败',
+      installCanceled: '资源包 {name} 安装已取消'
+    }
   },
   resourcePacks: {
     title: '资源包',

@@ -302,8 +302,8 @@ export default defineComponent({
     // 下载源选择
     const downloadSource = ref('default');
     const downloadSourceOptions = ref<DownloadSourceOption[]>([
-      { label: '默认源', value: 'default' },
-      { label: '国内源', value: 'china' }
+      { label: t('resourcePack.downloadSource.options.default'), value: 'default' },
+      { label: t('resourcePack.downloadSource.options.china'), value: 'china' }
     ]);
     
     // 资源表格列定义
@@ -387,7 +387,7 @@ export default defineComponent({
       } catch (err: Error | unknown) {
         console.error('Failed to load resource pack:', err);
         const errorObj = err as { response?: { data?: { message?: string } } };
-        error.value = errorObj.response?.data?.message || '加载资源包信息失败';
+        error.value = errorObj.response?.data?.message || t('resourcePack.loadError');
       } finally {
         loading.value = false;
       }
@@ -455,16 +455,18 @@ export default defineComponent({
         
         $q.notify({
           color: 'positive',
-          message: `开始安装资源包 ${pack.value.name}`,
+          message: t('resourcePack.notifications.startInstall', { name: pack.value.name }),
           icon: 'download'
         });
       } catch (err: Error | unknown) {
         installing.value = false;
         console.error('Failed to install resource pack:', err);
         const errorObj = err as { response?: { data?: { error?: string } } };
+        const errMsg = errorObj.response?.data?.error;
+        const suffix = errMsg ? `: ${errMsg}` : '';
         $q.notify({
           color: 'negative',
-          message: errorObj.response?.data?.error || '安装资源包失败',
+          message: t('resourcePack.notifications.installFailed', { suffix }),
           icon: 'error'
         });
       }
@@ -482,7 +484,7 @@ export default defineComponent({
         
         $q.notify({
           color: 'warning',
-          message: '取消安装操作已发送',
+          message: t('resourcePack.notifications.cancelSent'),
           icon: 'cancel'
         });
         
@@ -505,9 +507,11 @@ export default defineComponent({
       } catch (err: Error | unknown) {
         console.error('Failed to cancel installation:', err);
         const errorObj = err as { response?: { data?: { error?: string } } };
+        const errMsg = errorObj.response?.data?.error;
+        const suffix = errMsg ? `: ${errMsg}` : '';
         $q.notify({
           color: 'negative',
-          message: errorObj.response?.data?.error || '取消安装失败',
+          message: t('resourcePack.notifications.cancelFailed') + suffix,
           icon: 'error'
         });
       } finally {
@@ -557,19 +561,20 @@ export default defineComponent({
             if (installProgress.value.status === 'completed') {
               $q.notify({
                 color: 'positive',
-                message: `资源包 ${pack.value?.name} 安装完成`,
+                message: t('resourcePack.notifications.installComplete', { name: pack.value?.name || '' }),
                 icon: 'check_circle'
               });
             } else if (installProgress.value.status === 'error') {
+              const suffix = installProgress.value.error ? `: ${installProgress.value.error}` : '';
               $q.notify({
                 color: 'negative',
-                message: `资源包 ${pack.value?.name} 安装失败: ${installProgress.value.error}`,
+                message: t('resourcePack.notifications.installFailed', { suffix }),
                 icon: 'error'
               });
             } else if (installProgress.value.status === 'canceled') {
               $q.notify({
                 color: 'warning',
-                message: `资源包 ${pack.value?.name} 安装已取消`,
+                message: t('resourcePack.notifications.installCanceled', { name: pack.value?.name || '' }),
                 icon: 'cancel'
               });
             }
@@ -714,17 +719,14 @@ export default defineComponent({
     const formatDuration = (startTime: number, endTime?: number): string => {
       const end = endTime || Date.now();
       const diffSeconds = Math.floor((end - startTime) / 1000);
-      
       const hours = Math.floor(diffSeconds / 3600);
       const minutes = Math.floor((diffSeconds % 3600) / 60);
       const seconds = diffSeconds % 60;
-      
-      let result = '';
-      if (hours > 0) result += `${hours}小时 `;
-      if (minutes > 0 || hours > 0) result += `${minutes}分钟 `;
-      result += `${seconds}秒`;
-      
-      return result;
+      const parts: string[] = [];
+      if (hours > 0) parts.push(t('resourcePack.time.hours', { count: hours }));
+      if (minutes > 0 || hours > 0) parts.push(t('resourcePack.time.minutes', { count: minutes }));
+      parts.push(t('resourcePack.time.seconds', { count: seconds }));
+      return parts.join(' ');
     };
     
     // 获取已完成资源数量

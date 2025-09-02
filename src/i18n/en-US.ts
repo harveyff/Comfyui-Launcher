@@ -278,7 +278,10 @@ export default {
     controlNetPackage: 'ControlNet Model Package',
     controlNetModelsDesc: 'Contains all models required for ControlNet',
     framePackPackage: 'FramePack Video Generation Package',
-    framePackModelsDesc: 'Contains core models and workflows for video generation'
+    framePackModelsDesc: 'Contains core models and workflows for video generation',
+    notifications: {
+      essentialModelsInstalled: 'Essential models installed!'
+    }
   },
   installedModelsCard: {
     installedModels: 'Installed models',
@@ -729,7 +732,27 @@ export default {
       canceled: 'Canceled',
       unknown: 'Unknown'
     },
-    unknownError: 'Unknown error'
+    unknownError: 'Unknown error',
+    time: {
+      hours: '{count}h',
+      minutes: '{count}m',
+      seconds: '{count}s'
+    },
+    downloadSource: {
+      title: 'Download source',
+      options: {
+        default: 'Default',
+        china: 'China mirror'
+      }
+    },
+    notifications: {
+      startInstall: 'Starting installation of resource pack {name}',
+      installComplete: 'Resource pack {name} installed successfully',
+      installFailed: 'Failed to install resource pack{suffix}',
+      cancelSent: 'Cancel installation request sent',
+      cancelFailed: 'Failed to cancel installation',
+      installCanceled: 'Resource pack {name} installation canceled'
+    }
   },
   resourcePacks: {
     title: 'Resource packages',

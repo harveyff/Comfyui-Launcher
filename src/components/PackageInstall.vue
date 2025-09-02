@@ -104,6 +104,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import EssentialModelsDialog from './models/EssentialModelsDialog.vue';
 import ResourcePackDialog from './resources/ResourcePackDialog.vue';
 import { useQuasar } from 'quasar';
@@ -124,6 +125,7 @@ export default defineComponent({
     ResourcePackDialog
   },
   setup() {
+    const { t } = useI18n();
     const $q = useQuasar();
     const showEssentialModelsDialog = ref(false);
     const showResourcePackDialog = ref(false);
@@ -176,14 +178,15 @@ export default defineComponent({
         $q.notify({
           color: 'positive',
           icon: 'check_circle',
-          message: `${result.packId || '资源包'}安装完成！`,
+          message: t('resourcePack.notifications.installComplete', { name: result.packId || t('comfyuiStatus.messages.resourcePack') }),
           timeout: 3000
         });
       } else {
+        const suffix = result.error ? `: ${result.error}` : '';
         $q.notify({
           color: 'negative',
           icon: 'error',
-          message: `安装失败: ${result.error || '未知错误'}`,
+          message: t('resourcePack.notifications.installFailed', { suffix }),
           timeout: 5000
         });
       }
@@ -193,7 +196,7 @@ export default defineComponent({
       $q.notify({
         color: 'positive',
         icon: 'check_circle',
-        message: '基础模型安装完成！',
+        message: t('packageInstall.notifications.essentialModelsInstalled'),
         timeout: 3000
       });
     };

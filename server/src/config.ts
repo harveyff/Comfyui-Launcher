@@ -21,6 +21,17 @@ export const config = {
     port: 8188,
     proxyPort: 8190
   },
+  // 下载/安装重试策略
+  retry: {
+    // 单个资源失败后的重试次数（不含首次尝试）
+    maxAttempts: Number(process.env.RP_RETRY_ATTEMPTS || 4),
+    // 退避起始毫秒
+    baseDelayMs: Number(process.env.RP_RETRY_BASE_DELAY_MS || 1000),
+    // 指数退避倍数
+    backoffFactor: Number(process.env.RP_RETRY_BACKOFF || 4),
+    // 最大退避毫秒
+    maxDelayMs: Number(process.env.RP_RETRY_MAX_DELAY_MS || 15000),
+  },
   // 模型存储目录
   modelsDir: process.env.MODELS_DIR || path.join(process.cwd(), 'models'),
   

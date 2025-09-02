@@ -219,52 +219,103 @@ export class BaseResourcePacksController extends DownloadController {
         
         try {
           logger.info(`开始安装资源: ${resource.name} (${i + 1}/${resourcesToInstall.length})`);
-          
+
           // 创建进度回调函数
           const onProgress = (status: InstallStatus, progress: number, error?: string) => {
             this.progressManager.updateResourceStatus(taskId, resource.id, status, progress, error);
           };
-          
-          // 根据资源类型执行不同的安装逻辑，传递 AbortController
-          switch (resource.type) {
-            case ResourceType.MODEL:
-              await this.modelInstaller.installModelResource(
-                resource as ModelResource, 
-                taskId, 
-                source,
-                onProgress,
-                abortController
-              );
+
+          // 读取重试配置
+          // comment: keep config import lazy to avoid circular deps at top level
+          const { config } = require('../../config');
+          const maxAttempts: number = Number(config?.retry?.maxAttempts ?? 2);
+          const baseDelayMs: number = Number(config?.retry?.baseDelayMs ?? 1000);
+          const backoffFactor: number = Number(config?.retry?.backoffFactor ?? 2);
+          const maxDelayMs: number = Number(config?.retry?.maxDelayMs ?? 15000);
+
+          let attempt = 0;
+          // 首次尝试 + 重试次数
+          const totalAttempts = Math.max(1, 1 + (Number.isFinite(maxAttempts) ? maxAttempts : 0));
+          let lastError: any = undefined;
+
+          while (attempt < totalAttempts) {
+            // 取消检查
+            if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
+              logger.info(`资源 ${resource.name} 安装已取消`);
+              this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+              return;
+            }
+
+            try {
+              // 根据资源类型执行不同的安装逻辑，传递 AbortController
+              switch (resource.type) {
+                case ResourceType.MODEL:
+                  await this.modelInstaller.installModelResource(
+                    resource as ModelResource,
+                    taskId,
+                    source,
+                    onProgress,
+                    abortController
+                  );
+                  break;
+
+                case ResourceType.PLUGIN:
+                  await this.pluginInstaller.installPluginResource(
+                    resource as PluginResource,
+                    taskId,
+                    onProgress,
+                    abortController
+                  );
+                  break;
+
+                case ResourceType.WORKFLOW:
+                  await this.workflowInstaller.installWorkflowResource(
+                    resource as WorkflowResource,
+                    taskId,
+                    onProgress,
+                    abortController
+                  );
+                  break;
+
+                case ResourceType.CUSTOM:
+                  await this.customInstaller.installCustomResource(
+                    resource as CustomResource,
+                    taskId,
+                    onProgress,
+                    abortController
+                  );
+                  break;
+              }
+              // 成功则跳出重试循环
+              lastError = undefined;
               break;
-              
-            case ResourceType.PLUGIN:
-              await this.pluginInstaller.installPluginResource(
-                resource as PluginResource, 
-                taskId,
-                onProgress,
-                abortController
-              );
-              break;
-              
-            case ResourceType.WORKFLOW:
-              await this.workflowInstaller.installWorkflowResource(
-                resource as WorkflowResource, 
-                taskId,
-                onProgress,
-                abortController
-              );
-              break;
-              
-            case ResourceType.CUSTOM:
-              await this.customInstaller.installCustomResource(
-                resource as CustomResource, 
-                taskId,
-                onProgress,
-                abortController
-              );
-              break;
+            } catch (err) {
+              // 若为取消错误，直接退出
+              if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
+                logger.info(`资源 ${resource.name} 安装已取消`);
+                this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+                return;
+              }
+
+              lastError = err;
+              attempt++;
+
+              // 若还有机会，退避等待后重试
+              if (attempt < totalAttempts) {
+                const delay = Math.min(
+                  Math.floor(baseDelayMs * Math.pow(backoffFactor, attempt - 0)),
+                  maxDelayMs
+                );
+                logger.warn(`安装资源失败，准备重试(${attempt}/${totalAttempts - 1}): ${resource.name}, wait ${delay}ms`);
+                await new Promise(res => setTimeout(res, delay));
+                continue;
+              }
+
+              // 无更多重试机会，抛出以进入外层catch
+              throw err;
+            }
           }
-          
+
         } catch (error) {
           // 检查是否是取消导致的错误
           if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
