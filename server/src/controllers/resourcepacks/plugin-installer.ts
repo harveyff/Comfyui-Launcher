@@ -27,6 +27,8 @@ export class PluginInstaller {
     onProgress: (status: InstallStatus, progress: number, error?: string) => void,
     abortController?: AbortController
   ): Promise<void> {
+    // track last known percent to preserve on cancel
+    let lastPercent = 0;
     try {
       onProgress(InstallStatus.INSTALLING, 0);
 
@@ -48,6 +50,7 @@ export class PluginInstaller {
       const progressListener = (installProgress: any) => {
         // 更新安装进度
         if (installProgress && typeof installProgress.progress === 'number') {
+          lastPercent = installProgress.progress;
           onProgress(InstallStatus.INSTALLING, installProgress.progress);
         }
 
@@ -90,8 +93,8 @@ export class PluginInstaller {
       const errorMsg = error instanceof Error ? error.message : String(error);
       
       // 如果是用户取消，设置状态为已取消
-      if (errorMsg.includes('取消')) {
-        onProgress(InstallStatus.CANCELED, 0);
+      if (/(取消|canceled|cancelled|abort|aborted)/i.test(errorMsg)) {
+        onProgress(InstallStatus.CANCELED, lastPercent);
         logger.info(`插件 ${resource.name} 安装已取消`);
       } else {
         // 其他错误

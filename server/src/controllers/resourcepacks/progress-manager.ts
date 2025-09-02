@@ -48,9 +48,17 @@ export class ProgressManager {
   public updateOverallProgress(taskId: string, currentIndex: number, totalResources: number): void {
     const progress = this.packInstallProgress.get(taskId);
     if (progress) {
-      progress.currentResourceIndex = currentIndex;
-      progress.totalResources = totalResources;
-      progress.progress = Math.floor(((currentIndex + 1) / totalResources) * 100);
+      // 统一为基于 resourceStatuses.progress 的平均值
+      const list = Array.isArray(progress.resourceStatuses) ? progress.resourceStatuses : [];
+      const count = list.length > 0 ? list.length : Math.max(1, totalResources || 0);
+      const sum = list.reduce((acc, r) => acc + Math.max(0, Math.min(100, Number(r.progress || 0))), 0);
+      const average = Math.floor(sum / count);
+
+      // 同步索引信息（以 completed 数量近似，用于兼容旧字段）
+      const completedCount = list.filter(r => r.status === InstallStatus.COMPLETED).length;
+      progress.currentResourceIndex = Math.max(0, completedCount - 1);
+      progress.totalResources = list.length || totalResources;
+      progress.progress = average;
     }
   }
 
@@ -79,6 +87,9 @@ export class ProgressManager {
         if (status === InstallStatus.COMPLETED || status === InstallStatus.ERROR || status === InstallStatus.CANCELED) {
           resourceStatus.endTime = Date.now();
         }
+
+        // 每次资源进度更新后同步刷新总体进度
+        this.updateOverallProgress(taskId, 0, packProgress.totalResources);
       }
     }
   }
@@ -117,6 +128,7 @@ export class ProgressManager {
       if (resourceStatus.status !== InstallStatus.COMPLETED && 
           resourceStatus.status !== InstallStatus.ERROR &&
           resourceStatus.status !== InstallStatus.SKIPPED) {
+        // 保留已存在的进度值，仅更新状态和结束时间
         resourceStatus.status = InstallStatus.CANCELED;
         resourceStatus.endTime = Date.now();
       }
@@ -139,8 +151,8 @@ export class ProgressManager {
    */
   public hasActiveTask(taskId: string): boolean {
     const progress = this.packInstallProgress.get(taskId);
+    // note: 冷启动对齐会创建 PENDING 的进度，这不应阻止重新开始安装
     return Boolean(progress && (
-      progress.status === InstallStatus.PENDING || 
       progress.status === InstallStatus.DOWNLOADING || 
       progress.status === InstallStatus.INSTALLING
     ));

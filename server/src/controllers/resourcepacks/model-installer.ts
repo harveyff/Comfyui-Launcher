@@ -29,6 +29,8 @@ export class ModelInstaller {
     onProgress: (status: InstallStatus, progress: number, error?: string) => void,
     abortController?: AbortController
   ): Promise<void> {
+    // track last known percent to preserve on cancel
+    let lastPercent = 0;
     try {
       onProgress(InstallStatus.DOWNLOADING, 0);
 
@@ -67,6 +69,7 @@ export class ModelInstaller {
       // 创建下载进度处理函数
       const onDownloadProgress = (downloadedBytes: number, totalBytes: number) => {
         const percent = totalBytes > 0 ? Math.floor((downloadedBytes / totalBytes) * 100) : 0;
+        lastPercent = percent;
         onProgress(InstallStatus.DOWNLOADING, percent);
 
         // 记录进度
@@ -99,7 +102,7 @@ export class ModelInstaller {
       // 检查下载结果
       if (!result) {
         logger.info(`下载已被用户取消: ${taskId}`);
-        onProgress(InstallStatus.CANCELED, 0);
+        onProgress(InstallStatus.CANCELED, lastPercent);
         return;
       }
 
@@ -125,8 +128,8 @@ export class ModelInstaller {
       const errorMsg = error instanceof Error ? error.message : String(error);
       
       // 如果是用户取消，设置状态为已取消
-      if (errorMsg.includes('下载已取消') || errorMsg.includes('aborted')) {
-        onProgress(InstallStatus.CANCELED, 0);
+      if (/(取消|canceled|cancelled|abort|aborted)/i.test(errorMsg)) {
+        onProgress(InstallStatus.CANCELED, lastPercent);
         logger.info(`模型 ${resource.name} 下载已取消`);
       } else {
         // 其他错误

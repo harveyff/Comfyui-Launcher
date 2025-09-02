@@ -209,13 +209,25 @@ export class BaseResourcePacksController extends DownloadController {
         
         const resource = resourcesToInstall[i];
         
-        // 更新当前资源状态
-        this.progressManager.updateResourceStatus(
-          taskId, 
-          resource.id, 
-          InstallStatus.DOWNLOADING, 
-          0
-        );
+        // 更新当前资源状态（若已有进度则不清零，保持已有百分比直至 onProgress 覆盖）
+        try {
+          const existing = this.progressManager.getProgress(taskId);
+          const keep = existing?.resourceStatuses.find(rs => rs.resourceId === resource.id)?.progress;
+          const initial = typeof keep === 'number' && keep > 0 ? keep : 0;
+          this.progressManager.updateResourceStatus(
+            taskId, 
+            resource.id, 
+            InstallStatus.DOWNLOADING, 
+            initial
+          );
+        } catch (_) {
+          this.progressManager.updateResourceStatus(
+            taskId, 
+            resource.id, 
+            InstallStatus.DOWNLOADING, 
+            0
+          );
+        }
         
         try {
           logger.info(`开始安装资源: ${resource.name} (${i + 1}/${resourcesToInstall.length})`);
@@ -242,7 +254,14 @@ export class BaseResourcePacksController extends DownloadController {
             // 取消检查
             if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
               logger.info(`资源 ${resource.name} 安装已取消`);
-              this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+              // 保留已记录的进度
+              try {
+                const existing = this.progressManager.getProgress(taskId);
+                const keep = existing?.resourceStatuses.find(rs => rs.resourceId === resource.id)?.progress ?? 0;
+                this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, keep);
+              } catch (_) {
+                this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+              }
               return;
             }
 
@@ -293,7 +312,14 @@ export class BaseResourcePacksController extends DownloadController {
               // 若为取消错误，直接退出
               if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
                 logger.info(`资源 ${resource.name} 安装已取消`);
-                this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+                // 保留已记录的进度
+                try {
+                  const existing = this.progressManager.getProgress(taskId);
+                  const keep = existing?.resourceStatuses.find(rs => rs.resourceId === resource.id)?.progress ?? 0;
+                  this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, keep);
+                } catch (_) {
+                  this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+                }
                 return;
               }
 
@@ -320,7 +346,14 @@ export class BaseResourcePacksController extends DownloadController {
           // 检查是否是取消导致的错误
           if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
             logger.info(`资源 ${resource.name} 安装已取消`);
-            this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+            // 保留已记录的进度
+            try {
+              const existing = this.progressManager.getProgress(taskId);
+              const keep = existing?.resourceStatuses.find(rs => rs.resourceId === resource.id)?.progress ?? 0;
+              this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, keep);
+            } catch (_) {
+              this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+            }
             return;
           }
           
@@ -358,7 +391,30 @@ export class BaseResourcePacksController extends DownloadController {
   public async getInstallProgress(ctx: Koa.Context): Promise<void> {
     const { taskId } = ctx.params;
     
-    const progress = this.progressManager.getProgress(taskId);
+    let progress = this.progressManager.getProgress(taskId);
+    if (!progress) {
+      // If no in-memory progress exists, try to bootstrap one by packId
+      // comment: allow querying immediately after server start
+      const pack = this.resourcePacks.find(p => p.id === taskId);
+      if (pack) {
+        logger.info(`[ResourcePacks] No in-memory progress for ${taskId}, found pack. Start disk reconciliation.`);
+        // Align progress with any partial downloads on disk to fix wrong percent after restart
+        try {
+          await this.reconcileProgressFromDisk(taskId, pack);
+          // refresh progress reference after reconciliation
+          progress = this.progressManager.getProgress(taskId);
+          if (!progress) {
+            logger.warn(`[ResourcePacks] Reconciliation finished but progress still missing. Create progress for ${taskId}.`);
+            progress = this.progressManager.createProgress(pack, taskId);
+          } else {
+            logger.info(`[ResourcePacks] Reconciliation produced progress for ${taskId}.`);
+          }
+        } catch (_) {
+          // ignore reconciliation errors
+        }
+      }
+    }
+    
     if (!progress) {
       ctx.status = 404;
       ctx.body = { error: `未找到任务 ${taskId} 的进度信息` };
@@ -366,6 +422,137 @@ export class BaseResourcePacksController extends DownloadController {
     }
     
     ctx.body = progress;
+  }
+
+  /**
+   * 冷启动对齐：根据磁盘上的现有文件(完整文件或 .download 临时文件)恢复每个资源的进度
+   * 仅对模型资源执行（可可靠定位到模型文件路径）
+   */
+  private async reconcileProgressFromDisk(taskId: string, pack: ResourcePack): Promise<void> {
+    try {
+      const { config } = require('../../config');
+      const modelsRootPath = config.modelsDir || path.join(this.comfyuiPath, 'models');
+      logger.info(`[ResourcePacks] Reconcile from disk. modelsRoot=${modelsRootPath}, pack=${pack.id}`);
+
+      // 统计整体进度
+      let totalPercent = 0;
+      let counted = 0;
+      let completedCount = 0;
+      let hasActive = false;
+
+      // Ensure a progress scaffold exists to update
+      let existing = this.progressManager.getProgress(taskId);
+      if (!existing) {
+        logger.info(`[ResourcePacks] No progress scaffold for ${taskId}, create one before updates.`);
+        existing = this.progressManager.createProgress(pack, taskId);
+      }
+
+      for (const r of pack.resources) {
+        if (this.isModelResource(r)) {
+          try {
+            const finalPath = path.join(modelsRootPath, r.dir, r.out);
+            const tempPath = `${finalPath}.download`;
+
+            const hasFinal = fs.existsSync(finalPath);
+            const hasTemp = fs.existsSync(tempPath);
+
+            const resourceSize = typeof (r as any).size === 'number' ? (r as any).size : undefined;
+
+            if (hasFinal) {
+              // 已存在最终文件，视为完成
+              logger.info(`[ResourcePacks] ${r.id} final exists => COMPLETED`);
+              this.progressManager.updateResourceStatus(taskId, r.id, InstallStatus.COMPLETED, 100);
+              totalPercent += 100;
+              completedCount += 1;
+              counted += 1;
+              continue;
+            }
+
+            if (hasTemp && resourceSize && resourceSize > 0) {
+              try {
+                const stat = fs.statSync(tempPath);
+                const downloaded = Math.max(0, Number(stat.size || 0));
+                const percent = Math.max(0, Math.min(100, Math.floor((downloaded / resourceSize) * 100)));
+                logger.info(`[ResourcePacks] ${r.id} temp exists ${downloaded}/${resourceSize} => ${percent}%`);
+                this.progressManager.updateResourceStatus(taskId, r.id, InstallStatus.DOWNLOADING, percent);
+                totalPercent += percent;
+                counted += 1;
+                if (percent > 0 && percent < 100) hasActive = true;
+                continue;
+              } catch (_) {
+                // ignore per-resource error
+                logger.warn(`[ResourcePacks] ${r.id} temp stat failed`);
+              }
+            }
+
+            // 若存在临时文件但未知资源大小，尝试通过远程HEAD获取大小
+            if (hasTemp && (!resourceSize || resourceSize <= 0)) {
+              try {
+                const url = this.getResourcePrimaryUrl(r as any);
+                if (url) {
+                  const remoteSize = await this.fetchRemoteContentLength(url);
+                  if (typeof remoteSize === 'number' && remoteSize > 0) {
+                    const stat = fs.statSync(tempPath);
+                    const downloaded = Math.max(0, Number(stat.size || 0));
+                    const percent = Math.max(0, Math.min(100, Math.floor((downloaded / remoteSize) * 100)));
+                    logger.info(`[ResourcePacks] ${r.id} temp exists ${downloaded}/${remoteSize} (remote) => ${percent}%`);
+                    this.progressManager.updateResourceStatus(taskId, r.id, InstallStatus.PENDING, percent);
+                    totalPercent += percent;
+                    counted += 1;
+                    if (percent > 0 && percent < 100) hasActive = true;
+                    continue;
+                  } else {
+                    logger.warn(`[ResourcePacks] ${r.id} remote size unavailable via HEAD`);
+                  }
+                } else {
+                  logger.warn(`[ResourcePacks] ${r.id} missing primary URL for HEAD`);
+                }
+              } catch (e) {
+                logger.warn(`[ResourcePacks] ${r.id} HEAD fetch failed: ${e instanceof Error ? e.message : String(e)}`);
+              }
+            }
+
+            // 未找到任何已下载痕迹
+            logger.info(`[ResourcePacks] ${r.id} no traces => PENDING`);
+            this.progressManager.updateResourceStatus(taskId, r.id, InstallStatus.PENDING, 0);
+            totalPercent += 0;
+            counted += 1;
+          } catch (_) {
+            // ignore per-resource error
+            logger.warn(`[ResourcePacks] ${r && (r as any).id ? (r as any).id : 'unknown'} reconcile error`);
+          }
+        }
+      }
+
+      // 汇总任务状态
+      if (counted > 0) {
+        const overall = Math.floor(totalPercent / counted);
+        logger.info(`[ResourcePacks] task ${taskId} overall approx ${overall}%, completed=${completedCount}/${counted}, active=${hasActive}`);
+        // 近似推导总体索引（用于现有overall计算逻辑不变）
+        this.progressManager.updateOverallProgress(taskId, Math.max(0, completedCount - 1), counted);
+        if (completedCount === counted) {
+          this.progressManager.updateTaskStatus(taskId, InstallStatus.COMPLETED);
+        // } else if (hasActive) {
+        //   this.progressManager.updateTaskStatus(taskId, InstallStatus.DOWNLOADING);
+        } else {
+          this.progressManager.updateTaskStatus(taskId, InstallStatus.PENDING);
+        }
+        // 将第一个资源的progress近似映射为overall百分比（由前端以resourceStatuses为准）
+        // 注：不单独设置一个overall字段，这里依赖前端读取 resourceStatuses
+      }
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  // 类型守卫：模型资源
+  private isModelResource(resource: any): resource is ModelResource {
+    return Boolean(
+      resource &&
+      resource.type === ResourceType.MODEL &&
+      typeof resource.dir === 'string' &&
+      typeof resource.out === 'string'
+    );
   }
 
   /**

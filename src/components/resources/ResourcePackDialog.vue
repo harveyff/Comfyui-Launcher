@@ -78,8 +78,8 @@
             </div>
           </div>
           
-          <!-- 安装进度面板 -->
-          <div v-if="installProgress && ['downloading', 'installing', 'completed', 'error', 'canceled'].includes(installProgress.status)" class="install-progress-panel q-mb-md">
+          <!-- 安装进度面板：pending 时也可展示（便于展示已对齐的进度） -->
+          <div v-if="installProgress && ['pending', 'downloading', 'installing', 'completed', 'error', 'canceled'].includes(installProgress.status)" class="install-progress-panel q-mb-md">
             <div class="text-h6">{{ $t('resourcePack.installationProgress') }}</div>
             
             <!-- 上方：详细信息 -->
@@ -112,7 +112,7 @@
               <div class="text-subtitle2">{{ $t('resourcePack.overallProgress') }}</div>
               <div class="progress-info">
                 <q-linear-progress
-                  :value="installProgress.progress / 100"
+                  :value="(installProgress.progress || 0) / 100"
                   color="primary"
                   class="q-mb-xs"
                   size="15px"
@@ -161,7 +161,7 @@
               <!-- 状态列自定义渲染 -->
               <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="status-cell">
-                  <div v-if="installProgress && ['downloading', 'installing', 'completed', 'error', 'canceled'].includes(installProgress.status)" class="status-container">
+                  <div v-if="installProgress" class="status-container">
                     <div class="row items-center no-wrap status-row">
                       <q-icon
                         :name="getResourceStatusIcon(props.row.id, installProgress)"
@@ -172,8 +172,8 @@
                       <span>{{ getResourceStatusLabel(props.row.id, installProgress) }}</span>
                     </div>
                     
-                    <!-- 如果正在下载，显示进度条 -->
-                    <div v-if="getResourceStatus(props.row.id, installProgress) === 'downloading'" class="progress-container q-mt-xs">
+                    <!-- 有进度即显示进度条（包含 pending 但有进度的情况） -->
+                    <div v-if="getResourceProgress(props.row.id, installProgress) > 0 && getResourceProgress(props.row.id, installProgress) < 100" class="progress-container q-mt-xs">
                       <div class="progress-info">
                         <q-linear-progress
                           :value="getResourceProgress(props.row.id, installProgress) / 100"
@@ -413,15 +413,17 @@ export default defineComponent({
             
             // 只有确认获取到进度数据后，才设置为安装状态
             if (confirmResponse.data) {
-              installProgress.value = confirmResponse.data;
-              installing.value = true;
+              const confirmed = confirmResponse.data as InstallProgress;
+              installProgress.value = confirmed;
+              const isActive = ['downloading', 'installing'].includes(confirmed.status);
+              installing.value = isActive;
               
-              // 如果任务还在进行中，启动持续轮询
-              if (installProgress.value && !['completed', 'error', 'canceled'].includes(installProgress.value.status)) {
+              // 仅在活跃状态下启动持续轮询
+              if (isActive) {
                 startPolling(props.packId);
               }
               
-              console.log('Confirmed active installation task:', installProgress.value);
+              console.log('Confirmed installation task:', installProgress.value, 'active=', isActive);
             }
           } catch (confirmErr) {
             console.log('Could not confirm installation task is active');
@@ -541,8 +543,8 @@ export default defineComponent({
         if (installProgress.value) {
           console.log('Install progress status:', installProgress.value.status, 'installing:', installing.value);
           
-          // 如果安装完成或失败或取消，停止轮询
-          if (['completed', 'error', 'canceled'].includes(installProgress.value.status)) {
+          // 如果非活跃（含 pending/completed/error/canceled），停止轮询并重置 installing
+          if (!['downloading', 'installing'].includes(installProgress.value.status)) {
             console.log('Stopping polling and resetting installing state for status:', installProgress.value.status);
             stopPolling();
             
