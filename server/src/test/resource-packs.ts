@@ -2,7 +2,7 @@
  * 资源包测试数据
  * 包含四种类型的资源各一个
  */
-import { ResourcePack, ResourceType } from '../controllers/resource-packs.controller';
+import { ResourcePack, ResourceType } from '../controllers/resourcepacks/resource-packs.controller';
 
 // 测试用资源包数据
 export const testResourcePack: ResourcePack = {

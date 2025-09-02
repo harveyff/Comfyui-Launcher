@@ -4,7 +4,7 @@
 import * as Koa from 'koa';
 import * as path from 'path';
 import * as fs from 'fs';
-import { DownloadController } from './download.controller';
+import { DownloadController } from './download/download.controller';
 // import { getConfig } from '../config';
 import * as loggerIn from '../utils/logger';
 import { EssentialModel, DownloadProgress } from '../types/models.types';

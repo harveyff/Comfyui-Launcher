@@ -1,0 +1,62 @@
+/**
+ * 资源包管理控制器
+ * 用于管理和安装包含多种资源类型的资源包
+ */
+import * as Koa from 'koa';
+import { BaseResourcePacksController } from './base-controller';
+import { ResourcePack, InstallStatus } from '../../types/resource-packs.types';
+import { logger } from '../../utils/logger';
+
+/**
+ * 资源包管理控制器类
+ */
+export class ResourcePacksController extends BaseResourcePacksController {
+  constructor() {
+    super();
+  }
+
+  
+  /**
+   * 安装资源包
+   */
+  public async installResourcePack(ctx: Koa.Context): Promise<void> {
+    const { packId } = ctx.request.body as { packId: string };
+    const { selectedResources } = ctx.request.body as { selectedResources?: string[] };
+    const { source = 'hf' } = ctx.request.body as { source?: string };
+    
+    // 查找资源包
+    const pack = this.resourcePacks.find(p => p.id === packId);
+    if (!pack) {
+      ctx.status = 404;
+      ctx.body = { error: `资源包 ${packId} 不存在` };
+      return;
+    }
+    
+    // 使用资源包ID作为任务ID
+    const taskId = packId;
+    
+    // 检查是否已有相同的安装任务在进行中
+    if (this.progressManager.hasActiveTask(taskId)) {
+      // 已有相同的安装任务在进行中，直接返回任务ID
+      ctx.body = { taskId, existing: true };
+      return;
+    }
+    
+    // 创建安装进度记录
+    this.progressManager.createProgress(pack, taskId);
+    
+    // 启动异步安装任务
+    this.startResourcePackInstallation(pack, taskId, source, selectedResources)
+      .catch(err => {
+        logger.error(`资源包安装失败: ${err.message}`);
+        
+        // 更新安装状态为错误
+        this.progressManager.updateTaskStatus(taskId, InstallStatus.ERROR, err.message);
+      });
+    
+    // 返回任务ID
+    ctx.body = { taskId, existing: false };
+  }
+
+
+} 

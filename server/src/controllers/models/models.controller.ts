@@ -2,7 +2,7 @@ import { Context } from 'koa';
 import fs from 'fs-extra';
 import path from 'path';
 import { logger } from '../../utils/logger';
-import { DownloadController } from '../download.controller';
+import { DownloadController } from '../download/download.controller';
 import { EssentialModel } from '../../types/models.types';
 import { essentialModels } from '../essential-models.controller';
 import { SystemController } from '../system/system.controller';

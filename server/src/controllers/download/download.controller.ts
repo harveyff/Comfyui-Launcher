@@ -4,9 +4,9 @@
 import * as Koa from 'koa';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
-import logger, { i18nLogger } from '../utils/logger';
-import { DownloadProgress, EssentialModel, DownloadOptions } from '../types/models.types';
-import { createDownloadProgress, downloadFile } from '../utils/download.utils';
+import logger, { i18nLogger } from '../../utils/logger';
+import { DownloadProgress, EssentialModel, DownloadOptions } from '../../types/models.types';
+import { createDownloadProgress, downloadFile } from '../../utils/download.utils';
 
 // 添加下载历史记录接口
 interface DownloadHistoryItem {
