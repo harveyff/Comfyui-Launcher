@@ -54,6 +54,22 @@
             </div>
             <div class="col-auto">
               <q-btn 
+                v-if="installProgress && installProgress.status === 'canceled'"
+                color="primary" 
+                :label="$t('resourcePack.getAllResources')" 
+                @click="installResourcePack"
+                :disable="false"
+              />
+              <q-btn 
+                v-else-if="installing || (installProgress && ['downloading', 'installing'].includes(installProgress.status))"
+                color="negative" 
+                :label="$t('resourcePack.cancelInstallation')" 
+                @click="cancelInstallation"
+                icon="cancel"
+                :loading="canceling"
+              />
+              <q-btn 
+                v-else
                 color="primary" 
                 :label="$t('resourcePack.getAllResources')" 
                 @click="installResourcePack"
@@ -63,7 +79,7 @@
           </div>
           
           <!-- 安装进度面板 -->
-          <div v-if="installing && installProgress" class="install-progress-panel q-mb-md">
+          <div v-if="installProgress && ['downloading', 'installing', 'completed', 'error', 'canceled'].includes(installProgress.status)" class="install-progress-panel q-mb-md">
             <div class="text-h6">{{ $t('resourcePack.installationProgress') }}</div>
             
             <!-- 上方：详细信息 -->
@@ -145,7 +161,7 @@
               <!-- 状态列自定义渲染 -->
               <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="status-cell">
-                  <div v-if="installing && installProgress" class="status-container">
+                  <div v-if="installProgress && ['downloading', 'installing', 'completed', 'error', 'canceled'].includes(installProgress.status)" class="status-container">
                     <div class="row items-center no-wrap status-row">
                       <q-icon
                         :name="getResourceStatusIcon(props.row.id, installProgress)"
@@ -281,6 +297,7 @@ export default defineComponent({
     const installing = ref(false);
     const installProgress = ref<InstallProgress | null>(null);
     const pollingInterval = ref<number | null>(null);
+    const canceling = ref(false);
     
     // 下载源选择
     const downloadSource = ref('default');
@@ -458,6 +475,8 @@ export default defineComponent({
       try {
         if (!installProgress.value) return;
         
+        canceling.value = true;
+        
         // Use resourcePacks.cancelInstallation API
         await api.resourcePacks.cancelInstallation(installProgress.value.taskId);
         
@@ -466,6 +485,23 @@ export default defineComponent({
           message: '取消安装操作已发送',
           icon: 'cancel'
         });
+        
+        // 乐观更新本地状态，立即反映到UI
+        installing.value = false;
+        if (installProgress.value) {
+          installProgress.value = {
+            ...installProgress.value,
+            status: 'canceled',
+            endTime: Date.now()
+          };
+        }
+
+        // 立即拉取一次服务端最新进度，确保状态同步
+        await fetchInstallProgress(installProgress.value?.taskId || '');
+        
+        // 已达终态时停止轮询
+        stopPolling();
+        
       } catch (err: Error | unknown) {
         console.error('Failed to cancel installation:', err);
         const errorObj = err as { response?: { data?: { error?: string } } };
@@ -474,6 +510,8 @@ export default defineComponent({
           message: errorObj.response?.data?.error || '取消安装失败',
           icon: 'error'
         });
+      } finally {
+        canceling.value = false;
       }
     };
     
@@ -497,10 +535,16 @@ export default defineComponent({
         
         // 如果有进度数据
         if (installProgress.value) {
+          console.log('Install progress status:', installProgress.value.status, 'installing:', installing.value);
           
           // 如果安装完成或失败或取消，停止轮询
           if (['completed', 'error', 'canceled'].includes(installProgress.value.status)) {
+            console.log('Stopping polling and resetting installing state for status:', installProgress.value.status);
             stopPolling();
+            
+            // 重置安装状态
+            installing.value = false;
+            console.log('Installing state reset to:', installing.value);
             
             // 发送安装完成事件
             emit('installation-complete', {
@@ -522,6 +566,12 @@ export default defineComponent({
                 message: `资源包 ${pack.value?.name} 安装失败: ${installProgress.value.error}`,
                 icon: 'error'
               });
+            } else if (installProgress.value.status === 'canceled') {
+              $q.notify({
+                color: 'warning',
+                message: `资源包 ${pack.value?.name} 安装已取消`,
+                icon: 'cancel'
+              });
             }
           }
         }
@@ -540,7 +590,7 @@ export default defineComponent({
     
     // 关闭对话框
     const closeDialog = () => {
-      if (installing.value && installProgress.value?.status !== 'completed' && installProgress.value?.status !== 'error') {
+      if (installing.value && installProgress.value?.status !== 'completed' && installProgress.value?.status !== 'error' && installProgress.value?.status !== 'canceled') {
         // $q.dialog({
         //   title: '取消安装',
         //   message: '资源包正在安装中，确定要关闭对话框吗？安装将在后台继续进行。',
@@ -726,6 +776,7 @@ export default defineComponent({
       error,
       installing,
       installProgress,
+      canceling,
       downloadSource,
       downloadSourceOptions,
       resourceColumns,

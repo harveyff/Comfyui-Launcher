@@ -711,6 +711,7 @@ export default {
     packageDetails: 'Package Details',
     currentVersion: 'Current version v{version}',
     getAllResources: 'Get All Resources',
+    cancelInstallation: 'Cancel Installation',
     columns: {
       name: 'Name',
       type: 'Type',

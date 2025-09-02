@@ -127,7 +127,7 @@ router.get('/api/resource-packs', (ctx) => resourcePacksController.getResourcePa
 router.get('/api/resource-packs/:id', (ctx) => resourcePacksController.getResourcePackDetail(ctx));
 router.post('/api/resource-packs/install', (ctx) => resourcePacksController.installResourcePack(ctx));
 router.get('/api/resource-packs/progress/:taskId', (ctx) => resourcePacksController.getInstallProgress(ctx));
-router.post('/api/resource-packs/cancel/:taskId', (ctx) => resourcePacksController.cancelInstallation(ctx));
+router.post('/api/resource-packs/cancel/:taskId', (ctx) => resourcePacksController.cancelResourcePackInstallation(ctx));
 
 // 自定义模型下载路由 - 修正路径
 router.post('/api/models/download-custom', modelsController.downloadCustomModel.bind(modelsController));

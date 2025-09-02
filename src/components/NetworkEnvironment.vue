@@ -4,7 +4,7 @@
       <q-card-section style="width: 100%; margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px;">
         <div class="row justify-between items-center q-mb-sm" style="margin-left: 16px;margin-right: 16px;">
           <div class="text-subtitle1" style="color: var(--text-important);">{{ $t('network.environment') }}</div>
-          <q-btn outline color="grey-7" style="border-radius: var(--border-radius-md); margin-right: 8px; margin-top: 16px;" size="sm" @click="checkNetworkStatus" >
+          <q-btn outline color="grey-7" style="border-radius: var(--border-radius-md); " size="sm" @click="checkNetworkStatus" >
             <q-icon :name="allAccessible ? 'wifi' : 'wifi_off'" style="margin-right: 6px;"/> 
             {{ $t('network.checkNetwork') }}  
           </q-btn>

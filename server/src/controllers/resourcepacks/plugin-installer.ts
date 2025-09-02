@@ -24,7 +24,8 @@ export class PluginInstaller {
   public async installPluginResource(
     resource: PluginResource,
     taskId: string,
-    onProgress: (status: InstallStatus, progress: number, error?: string) => void
+    onProgress: (status: InstallStatus, progress: number, error?: string) => void,
+    abortController?: AbortController
   ): Promise<void> {
     try {
       onProgress(InstallStatus.INSTALLING, 0);

@@ -19,3 +19,6 @@ export { ProgressManager } from './progress-manager';
 
 // 类型定义
 export * from '../../types/resource-packs.types';
+
+// 导出取消功能相关的方法和类型
+export { InstallStatus } from '../../types/resource-packs.types';

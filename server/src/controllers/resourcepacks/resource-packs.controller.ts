@@ -58,5 +58,54 @@ export class ResourcePacksController extends BaseResourcePacksController {
     ctx.body = { taskId, existing: false };
   }
 
+  /**
+   * 取消资源包安装
+   */
+  public async cancelResourcePackInstallation(ctx: Koa.Context): Promise<void> {
+    const { taskId } = ctx.params;
+    
+    const progress = this.progressManager.getProgress(taskId);
+    if (!progress) {
+      ctx.status = 404;
+      ctx.body = { error: `未找到任务 ${taskId} 的进度信息` };
+      return;
+    }
+    
+    // 检查任务是否可以进行取消操作
+    if (progress.status === InstallStatus.COMPLETED || 
+        progress.status === InstallStatus.ERROR || 
+        progress.status === InstallStatus.CANCELED) {
+      ctx.status = 400;
+      ctx.body = { error: `任务 ${taskId} 已完成或已取消，无法再次取消` };
+      return;
+    }
+    
+    try {
+      // 取消任务
+      const success = this.progressManager.cancelTask(taskId);
+      
+      if (success) {
+        // 调用基类的取消下载方法
+        await this.cancelDownloadTask(taskId);
+        
+        logger.info(`成功取消资源包安装任务: ${taskId}`);
+        ctx.body = { 
+          success: true, 
+          message: '已成功取消安装任务',
+          taskId: taskId
+        };
+      } else {
+        ctx.status = 500;
+        ctx.body = { error: '取消任务失败' };
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      logger.error(`取消安装任务失败: ${errorMsg}`);
+      
+      ctx.status = 500;
+      ctx.body = { error: `取消任务失败: ${errorMsg}` };
+    }
+  }
+
 
 } 

@@ -30,6 +30,9 @@ export class BaseResourcePacksController extends DownloadController {
   protected workflowInstaller: WorkflowInstaller;
   protected customInstaller: CustomInstaller;
   protected comfyuiPath: string;
+  
+  // 存储每个任务的 AbortController，用于取消下载
+  protected taskAbortControllers = new Map<string, AbortController>();
 
   constructor() {
     super();
@@ -175,6 +178,10 @@ export class BaseResourcePacksController extends DownloadController {
       throw new Error(`未找到任务 ${taskId} 的进度信息`);
     }
     
+    // 为任务创建 AbortController
+    const abortController = new AbortController();
+    this.taskAbortControllers.set(taskId, abortController);
+    
     // 更新状态为下载中
     this.progressManager.updateTaskStatus(taskId, InstallStatus.DOWNLOADING);
     
@@ -183,91 +190,108 @@ export class BaseResourcePacksController extends DownloadController {
       ? pack.resources.filter(r => selectedResources.includes(r.id))
       : pack.resources;
     
-    // 依次安装每个资源
-    for (let i = 0; i < resourcesToInstall.length; i++) {
-      // 检查是否已取消
-      if (this.progressManager.isTaskCanceled(taskId)) {
-        logger.info(`安装已取消: ${pack.name}`);
-        this.progressManager.updateTaskStatus(taskId, InstallStatus.CANCELED);
-        return;
-      }
-      
-      const resource = resourcesToInstall[i];
-      
-      // 更新当前资源状态
-      this.progressManager.updateResourceStatus(
-        taskId, 
-        resource.id, 
-        InstallStatus.DOWNLOADING, 
-        0
-      );
-      
-      try {
-        logger.info(`开始安装资源: ${resource.name} (${i + 1}/${resourcesToInstall.length})`);
-        
-        // 创建进度回调函数
-        const onProgress = (status: InstallStatus, progress: number, error?: string) => {
-          this.progressManager.updateResourceStatus(taskId, resource.id, status, progress, error);
-        };
-        
-        // 根据资源类型执行不同的安装逻辑
-        switch (resource.type) {
-          case ResourceType.MODEL:
-            await this.modelInstaller.installModelResource(
-              resource as ModelResource, 
-              taskId, 
-              source,
-              onProgress
-            );
-            break;
-            
-          case ResourceType.PLUGIN:
-            await this.pluginInstaller.installPluginResource(
-              resource as PluginResource, 
-              taskId,
-              onProgress
-            );
-            break;
-            
-          case ResourceType.WORKFLOW:
-            await this.workflowInstaller.installWorkflowResource(
-              resource as WorkflowResource, 
-              taskId,
-              onProgress
-            );
-            break;
-            
-          case ResourceType.CUSTOM:
-            await this.customInstaller.installCustomResource(
-              resource as CustomResource, 
-              taskId,
-              onProgress
-            );
-            break;
+    try {
+      // 依次安装每个资源
+      for (let i = 0; i < resourcesToInstall.length; i++) {
+        // 检查是否已取消
+        if (this.progressManager.isTaskCanceled(taskId) || abortController.signal.aborted) {
+          logger.info(`安装已取消: ${pack.name}`);
+          this.progressManager.updateTaskStatus(taskId, InstallStatus.CANCELED);
+          return;
         }
         
-      } catch (error) {
-        // 记录错误并继续安装其他资源
-        const errorMsg = error instanceof Error ? error.message : String(error);
-        logger.error(`安装资源 ${resource.name} 失败: ${errorMsg}`);
+        const resource = resourcesToInstall[i];
         
+        // 更新当前资源状态
         this.progressManager.updateResourceStatus(
           taskId, 
           resource.id, 
-          InstallStatus.ERROR, 
-          0, 
-          errorMsg
+          InstallStatus.DOWNLOADING, 
+          0
         );
+        
+        try {
+          logger.info(`开始安装资源: ${resource.name} (${i + 1}/${resourcesToInstall.length})`);
+          
+          // 创建进度回调函数
+          const onProgress = (status: InstallStatus, progress: number, error?: string) => {
+            this.progressManager.updateResourceStatus(taskId, resource.id, status, progress, error);
+          };
+          
+          // 根据资源类型执行不同的安装逻辑，传递 AbortController
+          switch (resource.type) {
+            case ResourceType.MODEL:
+              await this.modelInstaller.installModelResource(
+                resource as ModelResource, 
+                taskId, 
+                source,
+                onProgress,
+                abortController
+              );
+              break;
+              
+            case ResourceType.PLUGIN:
+              await this.pluginInstaller.installPluginResource(
+                resource as PluginResource, 
+                taskId,
+                onProgress,
+                abortController
+              );
+              break;
+              
+            case ResourceType.WORKFLOW:
+              await this.workflowInstaller.installWorkflowResource(
+                resource as WorkflowResource, 
+                taskId,
+                onProgress,
+                abortController
+              );
+              break;
+              
+            case ResourceType.CUSTOM:
+              await this.customInstaller.installCustomResource(
+                resource as CustomResource, 
+                taskId,
+                onProgress,
+                abortController
+              );
+              break;
+          }
+          
+        } catch (error) {
+          // 检查是否是取消导致的错误
+          if (abortController.signal.aborted || this.progressManager.isTaskCanceled(taskId)) {
+            logger.info(`资源 ${resource.name} 安装已取消`);
+            this.progressManager.updateResourceStatus(taskId, resource.id, InstallStatus.CANCELED, 0);
+            return;
+          }
+          
+          // 记录错误并继续安装其他资源
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          logger.error(`安装资源 ${resource.name} 失败: ${errorMsg}`);
+          
+          this.progressManager.updateResourceStatus(
+            taskId, 
+            resource.id, 
+            InstallStatus.ERROR, 
+            0, 
+            errorMsg
+          );
+        }
+        
+        // 更新总体进度
+        this.progressManager.updateOverallProgress(taskId, i, resourcesToInstall.length);
       }
       
-      // 更新总体进度
-      this.progressManager.updateOverallProgress(taskId, i, resourcesToInstall.length);
+      // 完成安装
+      this.progressManager.updateTaskStatus(taskId, InstallStatus.COMPLETED);
+      
+      logger.info(`资源包 ${pack.name} 安装完成`);
+      
+    } finally {
+      // 清理 AbortController
+      this.taskAbortControllers.delete(taskId);
     }
-    
-    // 完成安装
-    this.progressManager.updateTaskStatus(taskId, InstallStatus.COMPLETED);
-    
-    logger.info(`资源包 ${pack.name} 安装完成`);
   }
 
   /**
@@ -316,6 +340,13 @@ export class BaseResourcePacksController extends DownloadController {
     const success = this.progressManager.cancelTask(taskId);
     
     if (success) {
+      // 获取并取消对应的 AbortController
+      const abortController = this.taskAbortControllers.get(taskId);
+      if (abortController) {
+        abortController.abort();
+        logger.info(`已中断任务 ${taskId} 的 AbortController`);
+      }
+      
       // 调用父类的取消下载方法
       await super.cancelDownload({ request: { body: { taskId } } } as Koa.Context);
       logger.info(`成功取消下载任务: ${taskId}`);

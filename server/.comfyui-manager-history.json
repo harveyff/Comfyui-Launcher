@@ -1,5 +1,23 @@
 [
   {
+    "id": "4424118b-e6f5-4e83-a200-2216c5ec02e4",
+    "pluginId": "comfyui-impact-subpack",
+    "type": "install",
+    "startTime": 1756791005802,
+    "status": "running",
+    "logs": [
+      "[9/2/2025, 1:30:05 PM] 开始安装插件 comfyui-impact-subpack",
+      "[9/2/2025, 1:30:05 PM] 正在查找插件信息...",
+      "[9/2/2025, 1:30:05 PM] 找到插件: {\"id\":\"comfyui-impact-subpack\",\"name\":\"comfyui-impact-subpack\",\"install_type\":\"git-clone\",\"github\":\"https://github.com/example/comfyui-impact-subpack\",\"files\":[]}",
+      "[9/2/2025, 1:30:05 PM] 准备安装...",
+      "[9/2/2025, 1:30:05 PM] 正在下载插件...",
+      "[9/2/2025, 1:30:05 PM] 执行: git clone \"http://gh-proxy.com/https://github.com/example/comfyui-impact-subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"",
+      "[9/2/2025, 2:49:44 PM] Git克隆失败: Error: Command failed: git clone \"http://gh-proxy.com/https://github.com/example/comfyui-impact-subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\"\nCloning into '/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack'...\nremote: Repository not found.\nfatal: Authentication failed for 'https://hub.glowp.xyz/https:/github.com/example/comfyui-impact-subpack/'\n",
+      "[9/2/2025, 2:49:44 PM] 尝试备用方式: git clone \"http://gh-proxy.com/https://github.com/example/comfyui-impact-subpack\" \"/Users/sai/dev/work/os/ai/comfyui-starter/server/comfyui/custom_nodes/comfyui-impact-subpack\""
+    ],
+    "githubProxy": "http://gh-proxy.com/https://github.com/"
+  },
+  {
     "id": "36157e1e-13d6-45fe-96c4-c4673a620a0b",
     "pluginId": "ComfyUI-nunchaku",
     "type": "install",

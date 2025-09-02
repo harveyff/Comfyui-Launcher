@@ -21,7 +21,8 @@ export class WorkflowInstaller {
   public async installWorkflowResource(
     resource: WorkflowResource,
     taskId: string,
-    onProgress: (status: InstallStatus, progress: number, error?: string) => void
+    onProgress: (status: InstallStatus, progress: number, error?: string) => void,
+    abortController?: AbortController
   ): Promise<void> {
     try {
       onProgress(InstallStatus.DOWNLOADING, 0);
@@ -59,11 +60,11 @@ export class WorkflowInstaller {
       };
 
       // 配置下载选项
-      const abortController = new AbortController();
+      const downloadAbortController = abortController || new AbortController();
       const progressAdapter = this.createProgressAdapter(onDownloadProgress);
 
       const downloadOptions: CustomDownloadOptions = {
-        abortController,
+        abortController: downloadAbortController,
         onProgress: progressAdapter
       };
 

@@ -711,6 +711,7 @@ export default {
     packageDetails: '资源包详情',
     currentVersion: '当前版本 v{version}',
     getAllResources: '获取所有资源',
+    cancelInstallation: '取消安装',
     columns: {
       name: '名称',
       type: '类型',
