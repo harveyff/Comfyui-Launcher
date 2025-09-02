@@ -2,7 +2,7 @@
   "name": "comfyui-starter",
   "version": "0.0.1",
   "description": "For Comfyui",
-  "productName": "comfyui starter",
+  "productName": "ComfyUI Launcher",
   "author": "Sai <kldtks@live.com>",
   "private": true,
   "scripts": {

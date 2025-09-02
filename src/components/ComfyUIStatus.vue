@@ -4,7 +4,7 @@
       <div class="comfyui-container">
         <!-- 左侧放logo -->
         <div class="logo-container">
-          <img src="~assets/comfyui-logo2.png" alt="ComfyUI" class="app-logo" />
+          <img src="~assets/icon2.png" alt="ComfyUI" class="app-logo" />
         </div>
 
         <!-- 右侧放标题和版本信息 -->
@@ -698,14 +698,16 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 15px;
+
   border-radius: 8px;
+  
 }
 
 .app-logo {
-  width: 65px;
-  height: 65px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
+  border-radius: 8px;
 }
 
 /* 内容容器 */

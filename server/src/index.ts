@@ -17,7 +17,7 @@ import {
   uninstallPackage,
   analyzePluginDependencies,
   fixPluginDependencies
-} from './controllers/python.controller';
+} from './controllers/python/python.controller';
 import civitaiController from './controllers/civitai/civitai.controller';
 // 导入增强的日志记录工具
 import logger, { i18nLogger } from './utils/logger';

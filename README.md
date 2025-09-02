@@ -1,4 +1,4 @@
-# comfyui starter (comfyui-starter)
+# ComfyUI Launcher (comfyui-starter)
 
 For Comfyui
 
