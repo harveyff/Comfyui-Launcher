@@ -27,6 +27,8 @@ export interface Resource {
   name: string;
   type: ResourceType;
   description?: string;
+  // 文件大小（字节），如果可用
+  size?: number;
   optional?: boolean; // 是否可选安装
 }
 

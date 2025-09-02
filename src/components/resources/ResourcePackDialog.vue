@@ -688,13 +688,20 @@ export default defineComponent({
     };
     
     // 格式化文件大小
-    const formatFileSize = (bytes: number | string): string => {
-      const numBytes = typeof bytes === 'string' ? parseInt(bytes) : bytes;
+    const formatFileSize = (bytes: number | string | undefined | null): string => {
+      // Guard invalid inputs
+      const num = typeof bytes === 'string' ? Number(bytes) : bytes;
+      if (num == null || Number.isNaN(num) || !Number.isFinite(num as number) || (num as number) < 0) {
+        return '-';
+      }
+      const numBytes = num as number;
       if (numBytes === 0) return '0 B';
       const k = 1024;
       const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
       const i = Math.floor(Math.log(numBytes) / Math.log(k));
-      return parseFloat((numBytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      const idx = Math.min(Math.max(i, 0), sizes.length - 1);
+      const value = numBytes / Math.pow(k, idx);
+      return `${value.toFixed(2)} ${sizes[idx]}`;
     };
     
     // 格式化日期

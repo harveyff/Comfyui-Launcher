@@ -157,8 +157,15 @@ export class BaseResourcePacksController extends DownloadController {
       ctx.body = { error: `资源包 ${id} 不存在` };
       return;
     }
-    
-    ctx.body = pack;
+
+    // 在返回前尽可能为资源补充 size：先本地文件大小，其次尝试远程HEAD
+    try {
+      const withLocal = this.augmentPackWithLocalSizes(pack);
+      const augmented = await this.augmentPackWithRemoteSizes(withLocal);
+      ctx.body = augmented;
+    } catch (e) {
+      ctx.body = pack;
+    }
   }
 
   /**
@@ -353,5 +360,129 @@ export class BaseResourcePacksController extends DownloadController {
     }
     
     return success;
+  }
+
+  /**
+   * 尝试为资源包的资源补充本地文件大小（仅当文件已存在时）
+   */
+  protected augmentPackWithLocalSizes(pack: ResourcePack): ResourcePack {
+    try {
+      const { config } = require('../../config');
+      const modelsRootPath = config.modelsDir || path.join(this.comfyuiPath, 'models');
+
+      const resourcesWithSize = pack.resources.map((r: any) => {
+        // 仅对模型资源尝试补充文件大小
+        if (r.type === ResourceType.MODEL && r.dir && r.out) {
+          try {
+            const absPath = path.join(modelsRootPath, r.dir, r.out);
+            if (fs.existsSync(absPath)) {
+              const stats = fs.statSync(absPath);
+              if (typeof stats.size === 'number' && stats.size >= 0) {
+                return { ...r, size: stats.size };
+              }
+            }
+          } catch (_) {
+            // ignore
+          }
+        }
+        return r;
+      });
+
+      return { ...pack, resources: resourcesWithSize } as ResourcePack;
+    } catch (_) {
+      return pack;
+    }
+  }
+
+  /**
+   * 通过远程HEAD请求尝试为缺失size的模型资源补充文件大小
+   */
+  protected async augmentPackWithRemoteSizes(pack: ResourcePack): Promise<ResourcePack> {
+    const resources = await Promise.all(pack.resources.map(async (r: any) => {
+      if (r && r.type === ResourceType.MODEL && (r.size == null || Number.isNaN(r.size))) {
+        const url = this.getResourcePrimaryUrl(r);
+        if (url) {
+          try {
+            const contentLength = await this.fetchRemoteContentLength(url);
+            if (typeof contentLength === 'number' && contentLength > 0) {
+              return { ...r, size: contentLength };
+            }
+          } catch (_) {
+            // 忽略失败
+          }
+        }
+      }
+      return r;
+    }));
+
+    return { ...pack, resources } as ResourcePack;
+  }
+
+  /**
+   * 选择模型资源的主要下载URL
+   */
+  private getResourcePrimaryUrl(resource: any): string | undefined {
+    if (!resource) return undefined;
+    if (typeof resource.url === 'string') return resource.url;
+    if (resource.url && typeof resource.url === 'object') {
+      // 默认优先使用 hf
+      return resource.url.hf || resource.url.mirror;
+    }
+    return undefined;
+  }
+
+  /**
+   * 发送HEAD请求获取远程Content-Length
+   */
+  private fetchRemoteContentLength(url: string, redirectLimit: number = 3, timeoutMs: number = 5000): Promise<number | undefined> {
+    return new Promise((resolve) => {
+      try {
+        const httpModule = url.startsWith('https:') ? require('https') : require('http');
+        const controller: AbortController | undefined = typeof AbortController !== 'undefined' ? new AbortController() : undefined;
+        const timer = setTimeout(() => {
+          try { controller?.abort(); } catch (_) {}
+          resolve(undefined);
+        }, timeoutMs);
+
+        // 尝试应用HF_ENDPOINT与下载时一致的端点替换
+        let requestUrl = url;
+        try {
+          const { config } = require('../../config');
+          const hfEndpoint = process.env.HF_ENDPOINT || (config?.HF_ENDPOINT);
+          if (hfEndpoint && requestUrl.includes('huggingface.co')) {
+            requestUrl = requestUrl.replace('huggingface.co/', String(hfEndpoint).replace(/^https?:\/\//, ''));
+          }
+        } catch (_) {}
+
+        const req = httpModule.request(requestUrl, { method: 'HEAD', signal: controller?.signal }, (res: any) => {
+          const status = res.statusCode || 0;
+          // 处理重定向
+          if ([301, 302, 303, 307, 308].includes(status) && redirectLimit > 0 && res.headers && res.headers.location) {
+            const location = res.headers.location as string;
+            res.resume();
+            clearTimeout(timer);
+            this.fetchRemoteContentLength(location, redirectLimit - 1, timeoutMs).then(resolve);
+            return;
+          }
+          const lenHeader = res.headers ? (res.headers['content-length'] as string | undefined) : undefined;
+          res.resume();
+          clearTimeout(timer);
+          if (lenHeader) {
+            const n = parseInt(lenHeader, 10);
+            resolve(Number.isFinite(n) && n > 0 ? n : undefined);
+          } else {
+            resolve(undefined);
+          }
+        });
+
+        req.on('error', () => {
+          clearTimeout(timer);
+          resolve(undefined);
+        });
+        req.end();
+      } catch (_) {
+        resolve(undefined);
+      }
+    });
   }
 }
