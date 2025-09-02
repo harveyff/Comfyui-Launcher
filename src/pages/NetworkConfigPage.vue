@@ -126,140 +126,15 @@
       </q-card>
     </template>
 
-    <!-- 添加网络检查日志弹窗 -->
-    <q-dialog v-model="logDialog.show" persistent>
-      <q-card style="min-width: 600px; max-width: 80vw;">
-        <q-card-section class="row items-center bg-primary text-white">
-          <div class="text-h6">{{ $t('network.checkingLog') }}</div>
-          <q-space />
-
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        
-        <q-card-section style="max-height: 70vh; overflow-y: auto;">
-          <!-- 网络状态概览 -->
-          <div class="q-mb-md">
-            <div class="text-subtitle1 q-mb-sm">{{ $t('network.checkStatus') }}</div>
-            <div class="row q-col-gutter-md">
-              <div class="col-4">
-                <q-item>
-                  <q-item-section avatar>
-                    <q-avatar>
-                      <q-img src="../assets/github-logo.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>GitHub</q-item-label>
-                    <q-item-label caption>
-                      <q-chip 
-                        dense 
-                        :color="currentNetworkStatus.github?.accessible ? 'positive' : 'negative'" 
-                        text-color="white"
-                      >
-                        {{ currentNetworkStatus.github?.accessible ? $t('network.accessible') : $t('network.inaccessible') }}
-                      </q-chip>
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </div>
-              <div class="col-4">
-                <q-item>
-                  <q-item-section avatar>
-                    <q-avatar>
-                      <q-img src="../assets/pypi-logo.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ $t('network.pipSource') }}</q-item-label>
-                    <q-item-label caption>
-                      <q-chip 
-                        dense 
-                        :color="currentNetworkStatus.pip?.accessible ? 'positive' : 'negative'" 
-                        text-color="white"
-                      >
-                        {{ currentNetworkStatus.pip?.accessible ? $t('network.accessible') : $t('network.inaccessible') }}
-                      </q-chip>
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </div>
-              <div class="col-4">
-                <q-item>
-                  <q-item-section avatar>
-                    <q-avatar>
-                      <q-img src="../assets/huggingface-logo.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>Hugging Face</q-item-label>
-                    <q-item-label caption>
-                      <q-chip 
-                        dense 
-                        :color="currentNetworkStatus.huggingface?.accessible ? 'positive' : 'negative'" 
-                        text-color="white"
-                      >
-                        {{ currentNetworkStatus.huggingface?.accessible ? $t('network.accessible') : $t('network.inaccessible') }}
-                      </q-chip>
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </div>
-            </div>
-          </div>
-
-          <!-- 检查日志列表 -->
-          <div class="text-subtitle1 q-mb-sm">{{ $t('network.checkLogs') }}</div>
-          
-          <div v-if="logDialog.loading" class="text-center q-pa-md">
-            <q-spinner color="primary" size="3em" />
-            <div class="q-mt-sm">{{ $t('network.loadingLogs') }}</div>
-          </div>
-          
-          <div v-else-if="logDialog.logs.length === 0" class="text-center q-pa-md text-grey">
-            {{ $t('network.noLogs') }}
-          </div>
-          
-          <div v-else class="log-container">
-            <q-list separator>
-              <q-item v-for="(log, index) in logDialog.logs" :key="index">
-                <q-item-section avatar>
-                  <q-icon 
-                    :name="logIcon(log.type)" 
-                    :color="logColor(log.type)" 
-                  />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>
-                    <span v-if="log.service" class="log-service">
-                      [{{ log.service }}]
-                    </span>
-                    {{ log.message }}
-                  </q-item-label>
-                  <q-item-label caption>
-                    {{ formatTime(log.time) }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
-        </q-card-section>
-        
-        <q-card-section align="right">
-
-        <!-- 在网络检测弹窗中添加强制刷新按钮 -->
-          <div class="network-check-buttons">
-            <q-btn 
-              color="secondary" 
-              :loading="checkingNetwork" 
-              @click="forceCheckNetworkStatus" 
-              class="q-ml-sm"
-            >
-              {{ $t('network.forceCheck') }}
-            </q-btn>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+    <!-- 使用抽离的网络检查弹窗组件 -->
+    <NetworkCheckDialog
+      v-model="logDialog.show"
+      :loading="logDialog.loading"
+      :logs="logDialog.logs"
+      :current-network-status="currentNetworkStatus"
+      :checking-network="checkingNetwork"
+      @force-check="forceCheckNetworkStatus"
+    />
 
     <!-- 现有的通知对话框 -->
     <q-dialog v-model="notifyDialog.show">
@@ -284,8 +159,11 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import api from 'src/api';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
+import NetworkCheckDialog from '../components/NetworkCheckDialog.vue';
 
 const i18n = useI18n();
+const $q = useQuasar();
 
 // 输入框绑定的URL值
 const githubUrl = ref('');
@@ -333,31 +211,10 @@ const currentNetworkStatus = ref({
   huggingface: { accessible: false }
 });
 
-// 根据日志类型返回图标
-const logIcon = (type) => {
-  switch(type) {
-    case 'error': return 'error';
-    case 'success': return 'check_circle';
-    case 'info': 
-    default: return 'info';
-  }
-};
+// 是否正在强制检查网络
+const checkingNetwork = ref(false);
 
-// 根据日志类型返回颜色
-const logColor = (type) => {
-  switch(type) {
-    case 'error': return 'negative';
-    case 'success': return 'positive';
-    case 'info': 
-    default: return 'info';
-  }
-};
 
-// 格式化时间戳
-const formatTime = (timestamp) => {
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString();
-};
 
 // 显示通知
 const showNotify = (title, message, color = 'primary') => {
@@ -483,7 +340,7 @@ const checkNetworkStatus = async () => {
 
 // 强制重新检测网络状态（忽略缓存）
 async function forceCheckNetworkStatus() {
-  const checkingNetwork = ref(true);
+  checkingNetwork.value = true;
   try {
     // 获取当前语言
     const currentLocale = i18n.locale.value;
@@ -621,18 +478,5 @@ onBeforeUnmount(() => {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
 }
 
-.log-container {
-  max-height: 400px;
-  overflow-y: auto;
-}
 
-.log-service {
-  font-weight: bold;
-  margin-right: 6px;
-}
-
-.network-check-buttons {
-  margin-top: 16px;
-  text-align: right;
-}
 </style> 
