@@ -43,7 +43,7 @@ export class ProcessService {
   }
   
   // Start ComfyUI
-  async startComfyUI(): Promise<{ success: boolean; message: string; pid?: number | null; logs?: string[] }> {
+  async startComfyUI(lang: string = 'zh'): Promise<{ success: boolean; message: string; pid?: number | null; logs?: string[] }> {
     logger.info('[API] 收到启动ComfyUI请求');
     this.logService.clearLogs(); // Clear previous logs
     this.logService.addLog('收到启动ComfyUI请求', false, 'comfyui.logs.request_start');
@@ -52,9 +52,10 @@ export class ProcessService {
     const running = await isComfyUIRunning();
     if (running) {
       this.logService.addLog('ComfyUI已经在运行中', false, 'comfyui.logs.already_running');
+      const message = i18nLogger.translate('comfyui.start.already_running', { lng: lang }) || 'ComfyUI已经在运行中';
       return {
         success: false,
-        message: 'ComfyUI已经在运行中',
+        message: message,
         pid: this.comfyPid
       };
     }
@@ -152,9 +153,10 @@ export class ProcessService {
       
       if (comfyStarted) {
         this.logService.addLog('ComfyUI启动成功');
+        const message = i18nLogger.translate('comfyui.start.started', { lng: lang }) || 'ComfyUI已启动';
         return {
           success: true,
-          message: 'ComfyUI已启动',
+          message: message,
           pid: this.comfyPid
         };
       } else {
@@ -167,25 +169,27 @@ export class ProcessService {
         }
         this.startTime = null;
         
+        const message = i18nLogger.translate('comfyui.start.failed_timeout', { lng: lang }) || 'ComfyUI启动失败或超时';
         return {
           success: false,
-          message: 'ComfyUI启动失败或超时',
+          message: message,
           logs: this.logService.getRecentLogs()
         };
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logService.addLog(`ComfyUI启动失败: ${errorMessage}`, true);
+      const message = i18nLogger.translate('comfyui.start.failed', { message: errorMessage, lng: lang }) || `启动失败: ${errorMessage}`;
       return {
         success: false,
-        message: `启动失败: ${errorMessage}`,
+        message: message,
         logs: this.logService.getRecentLogs()
       };
     }
   }
   
   // Stop ComfyUI
-  async stopComfyUI(): Promise<{ success: boolean; message: string; error?: string }> {
+  async stopComfyUI(lang: string = 'zh'): Promise<{ success: boolean; message: string; error?: string }> {
     logger.info('[API] 收到停止ComfyUI请求');
     
     try {
@@ -195,7 +199,8 @@ export class ProcessService {
         logger.info('[API] ComfyUI已经停止，无需操作');
         this.comfyPid = null;
         this.startTime = null;
-        return { success: true, message: 'ComfyUI已经停止' };
+        const message = i18nLogger.translate('comfyui.stop.already_stopped', { lng: lang }) || 'ComfyUI已经停止';
+        return { success: true, message: message };
       }
       
       logger.info('[API] 尝试停止ComfyUI进程...');
@@ -212,7 +217,8 @@ export class ProcessService {
         logger.info('[API] ComfyUI已成功停止');
         this.comfyPid = null;
         this.startTime = null;
-        return { success: true, message: 'ComfyUI停止成功' };
+        const message = i18nLogger.translate('comfyui.stop.stopped', { lng: lang }) || 'ComfyUI停止成功';
+        return { success: true, message: message };
       } else {
         // If first attempt didn't succeed, try again with stronger method
         logger.warn('[API] 首次尝试未能完全停止ComfyUI，使用强制终止');
@@ -224,16 +230,19 @@ export class ProcessService {
           logger.info('[API] ComfyUI在强制终止后已停止');
           this.comfyPid = null;
           this.startTime = null;
-          return { success: true, message: 'ComfyUI停止成功（强制）' };
+          const message = i18nLogger.translate('comfyui.stop.stopped_force', { lng: lang }) || 'ComfyUI停止成功（强制）';
+          return { success: true, message: message };
         } else {
           logger.error('[API] 无法停止ComfyUI，即使在强制终止后');
-          return { success: false, message: '无法停止ComfyUI', error: '无法停止ComfyUI' };
+          const message = i18nLogger.translate('comfyui.stop.failed', { lng: lang }) || '无法停止ComfyUI';
+          return { success: false, message: message, error: message };
         }
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.error(`[API] 停止ComfyUI时发生错误: ${errorMessage}`);
-      return { success: false, message: '停止ComfyUI时发生错误', error: '停止ComfyUI时发生错误' };
+      const message = i18nLogger.translate('comfyui.stop.error', { lng: lang }) || '停止ComfyUI时发生错误';
+      return { success: false, message: message, error: message };
     }
   }
   

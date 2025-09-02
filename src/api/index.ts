@@ -198,11 +198,15 @@ const api = {
   getStatus: () => 
     superagent.get(`${API_BASE_URL}/status`).use(debug),
   
-  startComfyUI: () => 
-    superagent.post(`${API_BASE_URL}/start`),
+  startComfyUI: (lang?: string) => {
+    const params = lang ? `?lang=${lang}` : '';
+    return superagent.post(`${API_BASE_URL}/start${params}`);
+  },
   
-  stopComfyUI: () => 
-    superagent.post(`${API_BASE_URL}/stop`),
+  stopComfyUI: (lang?: string) => {
+    const params = lang ? `?lang=${lang}` : '';
+    return superagent.post(`${API_BASE_URL}/stop${params}`);
+  },
   
   // 模型管理
   getModels: () => 

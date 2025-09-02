@@ -130,6 +130,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import api from '../../api';
 import type { EssentialModel, DownloadProgress } from '../../types/models';
 
@@ -213,6 +214,7 @@ export default defineComponent({
   name: 'EssentialModelsCard',
   setup() {
     const $q = useQuasar();
+    const { t } = useI18n();
     
     // 本地状态
     const essentialModels = ref<EssentialModel[]>([]);
@@ -272,7 +274,7 @@ export default defineComponent({
         console.error('获取必要模型列表失败:', error);
         $q.notify({
           type: 'negative',
-          message: '无法获取必要模型列表'
+          message: t('essentialModels.errors.getModelsListFailed')
         });
       } finally {
         isLoading.value = false;
@@ -338,12 +340,12 @@ export default defineComponent({
             
             // 添加下载日志
             if (progress.status === 'completed' && !progress.error) {
-              addLog('基础模型已全部下载完成', '完成');
+              addLog(t('essentialModels.errors.downloadCompleted'), '完成');
               
               // 刷新模型列表以反映最新状态
               await fetchEssentialModels();
             } else if (progress.error) {
-              addLog(`下载出错: ${progress.error}`, '错误');
+              addLog(t('essentialModels.errors.downloadError', { error: progress.error }), '错误');
             }
             
             // 如果下载完成或出错，清除轮询
@@ -361,7 +363,7 @@ export default defineComponent({
           console.error('获取下载进度失败:', error);
           
           // 添加错误日志
-          addLog(`获取进度失败: ${error instanceof Error ? error.message : '未知错误'}`, '错误');
+          addLog(t('essentialModels.errors.getProgressFailed', { error: error instanceof Error ? error.message : t('customModelDownload.errors.unknownError') }), '错误');
           
           // 如果连续多次失败，可以考虑停止轮询
           if (downloadPollingInterval.value) {
@@ -377,7 +379,7 @@ export default defineComponent({
       if (isDownloading.value) return;
       
       // 添加下载开始日志
-      addLog('开始下载基础模型集合', '开始');
+      addLog(t('essentialModels.errors.downloadStarted'), '开始');
       
       try {
         isLoading.value = true;
@@ -413,20 +415,20 @@ export default defineComponent({
           
           $q.notify({
             type: 'info',
-            message: '开始下载基础模型'
+            message: t('essentialModels.errors.downloadStartedNotify')
           });
         } else {
-          throw new Error('服务器未返回有效的任务ID');
+          throw new Error(t('essentialModels.errors.noTaskId'));
         }
       } catch (error) {
         console.error('启动下载失败:', error);
         $q.notify({
           type: 'negative',
-          message: `启动下载失败: ${error instanceof Error ? error.message : String(error)}`
+          message: t('essentialModels.errors.startDownloadFailed', { error: error instanceof Error ? error.message : String(error) })
         });
         
         // 添加错误日志
-        addLog(`启动下载失败: ${error instanceof Error ? error.message : String(error)}`, '错误');
+        addLog(t('essentialModels.errors.startDownloadFailed', { error: error instanceof Error ? error.message : String(error) }), '错误');
       } finally {
         isLoading.value = false;
       }
@@ -452,7 +454,7 @@ export default defineComponent({
         downloadProgress.value = {};
         
         // 添加取消日志
-        addLog('用户取消了下载', '取消');
+        addLog(t('essentialModels.errors.userCancelled'), '取消');
         
         console.log('已取消下载');
       } catch (error) {
@@ -460,7 +462,7 @@ export default defineComponent({
         console.error('取消下载失败');
         
         // 添加错误日志
-        addLog(`取消下载失败: ${error instanceof Error ? error.message : '未知错误'}`, '错误');
+        addLog(t('essentialModels.errors.cancelFailed', { error: error instanceof Error ? error.message : t('customModelDownload.errors.unknownError') }), '错误');
       }
     };
     

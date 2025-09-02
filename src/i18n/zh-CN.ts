@@ -168,7 +168,23 @@ export default {
       install: '安装',
       installed: '已安装',
       analyzing: '正在分析依赖...',
-      noDependenciesFound: '没有找到依赖库'
+      noDependenciesFound: '没有找到依赖库',
+      errors: {
+        analyzeFailed: '分析插件依赖失败: {message}',
+        installSuccess: '依赖库 {name} 安装成功',
+        installFailed: '安装依赖库 {name} 失败：服务器内部错误。\n\n{details}',
+        requestError: '请求错误 ({status})',
+        noResponse: '未收到服务器响应，请检查网络连接或服务器状态。',
+        unknownError: '未知错误',
+        noMissingDeps: '没有缺失的依赖需要安装',
+        allDepsInstalled: '所有缺失的依赖已安装完成',
+        installFailedGeneric: '安装依赖失败: {message}',
+        selectPluginFirst: '请先选择一个插件',
+        pluginNotFound: '未找到所选插件',
+        noMissingDepsForPlugin: '所选插件没有缺失的依赖需要安装',
+        pluginDepsInstalled: '插件 {name} 的所有缺失依赖已安装完成',
+        serverNoDetails: '服务器未提供详细错误信息。'
+      }
     }
   },
   comfyuiStatus: {
@@ -215,6 +231,20 @@ export default {
     gpuMode: {
       independent: '独立模式',
       shared: '共享模式'
+    },
+    messages: {
+      missingModelsWarning: '缺少基础模型，仍将启动ComfyUI',
+      starting: 'ComfyUI 正在启动，请稍候...',
+      startFailed: '启动 ComfyUI 失败',
+      stopped: 'ComfyUI 已停止',
+      stopFailed: '停止 ComfyUI 失败',
+      logsUnavailable: '无法获取日志数据',
+      logsFailed: '获取日志失败，请稍后重试',
+      resourcePackInstalled: '{name}安装完成！',
+      resourcePackFailed: '安装失败: {error}',
+      noLogsToDownload: '没有可下载的日志',
+      unknownError: '未知错误',
+      resourcePack: '资源包'
     }
   },
   folderAccess: {
@@ -730,6 +760,31 @@ export default {
     customDirLabel: '目录名称',
     customDirHint: '输入自定义目录名称',
     customDirRequired: '请输入目录名称',
-    allFieldsRequired: '请填写所有必填字段'
+    allFieldsRequired: '请填写所有必填字段',
+    errors: {
+      invalidResponseData: '无效的响应数据：缺少任务ID',
+      downloadFailed: '下载失败: {error}',
+      downloadCancelled: '下载已取消',
+      cancelFailed: '取消下载失败: {error}',
+      downloadCompleted: '模型下载完成',
+      downloadError: '下载失败: {error}',
+      unknownError: '未知错误'
+    }
+  },
+  essentialModels: {
+    errors: {
+      getModelsListFailed: '无法获取必要模型列表',
+      downloadCompleted: '基础模型已全部下载完成',
+      downloadError: '下载出错: {error}',
+      getProgressFailed: '获取进度失败: {error}',
+      downloadStarted: '开始下载基础模型集合',
+      downloadStartedNotify: '开始下载基础模型',
+      noTaskId: '服务器未返回有效的任务ID',
+      startDownloadFailed: '启动下载失败: {error}',
+      userCancelled: '用户取消了下载',
+      cancelFailed: '取消下载失败: {error}',
+      confirmClose: '确认关闭',
+      closeWhileDownloading: '下载正在进行中，关闭对话框将在后台继续下载。确定要关闭吗？'
+    }
   }
 };

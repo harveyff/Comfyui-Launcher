@@ -105,7 +105,13 @@ export class ComfyUIController {
   async startComfyUI(ctx: Context): Promise<void> {
     logger.info('[API] 收到启动ComfyUI请求');
     
-    const result = await this.processService.startComfyUI();
+    // Get language from query parameters or request body, fallback to client locale
+    const lang = (ctx.query.lang as string) || 
+                 (ctx.request.body as any)?.lang || 
+                 getClientLocale(ctx) || 
+                 'zh';
+    
+    const result = await this.processService.startComfyUI(lang);
     
     if (result.success) {
       ctx.body = result;
@@ -119,7 +125,13 @@ export class ComfyUIController {
   async stopComfyUI(ctx: Context): Promise<void> {
     logger.info('[API] 收到停止ComfyUI请求');
     
-    const result = await this.processService.stopComfyUI();
+    // Get language from query parameters or request body, fallback to client locale
+    const lang = (ctx.query.lang as string) || 
+                 (ctx.request.body as any)?.lang || 
+                 getClientLocale(ctx) || 
+                 'zh';
+    
+    const result = await this.processService.stopComfyUI(lang);
     
     if (result.success) {
       ctx.body = result;

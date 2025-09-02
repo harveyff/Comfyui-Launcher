@@ -232,7 +232,7 @@ export default defineComponent({
         
         // 验证响应数据中有taskId
         if (!responseData || typeof responseData !== 'object' || !('taskId' in responseData)) {
-          throw new Error('无效的响应数据：缺少任务ID');
+          throw new Error(t('customModelDownload.errors.invalidResponseData'));
         }
         
         // 获取任务ID
@@ -248,7 +248,7 @@ export default defineComponent({
         // 显示错误通知
         $q.notify({
           color: 'negative',
-          message: `下载失败: ${error instanceof Error ? error.message : String(error)}`,
+          message: t('customModelDownload.errors.downloadFailed', { error: error instanceof Error ? error.message : String(error) }),
           icon: 'error'
         });
       }
@@ -263,7 +263,7 @@ export default defineComponent({
         
         $q.notify({
           color: 'info',
-          message: '下载已取消',
+          message: t('customModelDownload.errors.downloadCancelled'),
           icon: 'cancel'
         });
       } catch (error) {
@@ -271,7 +271,7 @@ export default defineComponent({
         
         $q.notify({
           color: 'negative',
-          message: `取消下载失败: ${error instanceof Error ? error.message : String(error)}`,
+          message: t('customModelDownload.errors.cancelFailed', { error: error instanceof Error ? error.message : String(error) }),
           icon: 'error'
         });
       }
@@ -323,13 +323,13 @@ export default defineComponent({
             if (currentTask.value && currentTask.value.completed) {
               $q.notify({
                 color: 'positive',
-                message: '模型下载完成',
+                message: t('customModelDownload.errors.downloadCompleted'),
                 icon: 'check_circle'
               });
             } else if (currentTask.value && currentTask.value.error) {
               $q.notify({
                 color: 'negative',
-                message: `下载失败: ${currentTask.value.error}`,
+                message: t('customModelDownload.errors.downloadError', { error: currentTask.value.error }),
                 icon: 'error'
               });
             }

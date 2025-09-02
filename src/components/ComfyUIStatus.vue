@@ -215,6 +215,7 @@ import { defineComponent, ref, computed, onMounted, onUnmounted, watch } from 'v
 import { modelsApi, Model } from '../api';
 import api from '../api';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 // import { useRouter } from 'vue-router';
 // 引入重置弹窗组件类型
 import ResetDialogs from '../components/reset/ResetDialogs.vue';
@@ -267,6 +268,7 @@ export default defineComponent({
   
   setup() {
     const $q = useQuasar();
+    const { t } = useI18n();
     // const router = useRouter();
     const isConnected = ref(false);
     const models = ref<Model[]>([]);
@@ -363,11 +365,11 @@ export default defineComponent({
         if (response && response.body && response.body.logs) {
           logs.value = response.body.logs;
         } else {
-          logs.value = ['无法获取日志数据'];
+          logs.value = [t('comfyuiStatus.messages.logsUnavailable')];
         }
       } catch (error) {
         console.error('获取日志失败:', error);
-        logs.value = ['获取日志失败，请稍后重试'];
+        logs.value = [t('comfyuiStatus.messages.logsFailed')];
       }
     };
     
@@ -407,7 +409,7 @@ export default defineComponent({
         if (rememberChoice.value) {
           $q.notify({
             type: 'warning',
-            message: '缺少基础模型，仍将启动ComfyUI'
+            message: t('comfyuiStatus.messages.missingModelsWarning')
           });
           startComfyUI();
           return;
@@ -440,14 +442,14 @@ export default defineComponent({
         $q.notify({
           color: 'positive',
           icon: 'check_circle',
-          message: `${result.packId || '资源包'}安装完成！`,
+          message: t('comfyuiStatus.messages.resourcePackInstalled', { name: result.packId || t('comfyuiStatus.messages.resourcePack') }),
           timeout: 3000
         });
       } else {
         $q.notify({
           color: 'negative',
           icon: 'error',
-          message: `安装失败: ${result.error || '未知错误'}`,
+          message: t('comfyuiStatus.messages.resourcePackFailed', { error: result.error || t('comfyuiStatus.messages.unknownError') }),
           timeout: 5000
         });
       }
@@ -460,7 +462,14 @@ export default defineComponent({
         isStarting.value = true;
         showLogs.value = false; // 重置日志显示状态
         
-        const response = await api.startComfyUI();
+        // Get current language for API call
+        let currentLang = $q.lang.getLocale();
+        if (currentLang && currentLang.includes('-')) {
+          currentLang = currentLang.split('-')[0];
+        }
+        currentLang = currentLang || (navigator.language ? navigator.language.split('-')[0] : 'en');
+        
+        const response = await api.startComfyUI(currentLang);
         
         // 检查服务器返回的响应状态和结构
         console.log('ComfyUI启动响应:', response);
@@ -468,7 +477,7 @@ export default defineComponent({
         if (response && response.body && response.body.success) {
           $q.notify({
             type: 'positive',
-            message: 'ComfyUI 正在启动，请稍候...'
+            message: t('comfyuiStatus.messages.starting')
           });
           
           // 等待启动完成
@@ -482,7 +491,7 @@ export default defineComponent({
           // 启动失败时显示错误通知
           $q.notify({
             type: 'negative',
-            message: response?.body?.message || '启动 ComfyUI 失败'
+            message: response?.body?.message || t('comfyuiStatus.messages.startFailed')
           });
           
           // 确保无论如何都能显示日志区域
@@ -502,7 +511,7 @@ export default defineComponent({
         isStarting.value = false;
         $q.notify({
           type: 'negative',
-          message: '启动 ComfyUI 失败'
+          message: t('comfyuiStatus.messages.startFailed')
         });
         console.error('启动 ComfyUI 失败:', error);
         
@@ -517,10 +526,18 @@ export default defineComponent({
     const stopComfyUI = async () => {
       try {
         isStopping.value = true;
-        await api.stopComfyUI();
+        
+        // Get current language for API call
+        let currentLang = $q.lang.getLocale();
+        if (currentLang && currentLang.includes('-')) {
+          currentLang = currentLang.split('-')[0];
+        }
+        currentLang = currentLang || (navigator.language ? navigator.language.split('-')[0] : 'en');
+        
+        await api.stopComfyUI(currentLang);
         $q.notify({
           type: 'info',
-          message: 'ComfyUI 已停止'
+          message: t('comfyuiStatus.messages.stopped')
         });
         isConnected.value = false;
         isStopping.value = false;
@@ -528,7 +545,7 @@ export default defineComponent({
         isStopping.value = false;
         $q.notify({
           type: 'negative',
-          message: '停止 ComfyUI 失败'
+          message: t('comfyuiStatus.messages.stopFailed')
         });
         console.error('停止 ComfyUI 失败:', error);
       }
@@ -577,7 +594,7 @@ export default defineComponent({
       if (logs.value.length === 0) {
         $q.notify({
           type: 'warning',
-          message: '没有可下载的日志'
+          message: t('comfyuiStatus.messages.noLogsToDownload')
         });
         return;
       }

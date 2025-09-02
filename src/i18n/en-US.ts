@@ -182,7 +182,23 @@ export default {
       install: 'Install',
       installed: 'Installed',
       analyzing: 'Analyzing dependencies...',
-      noDependenciesFound: 'No dependencies found'
+      noDependenciesFound: 'No dependencies found',
+      errors: {
+        analyzeFailed: 'Failed to analyze plugin dependencies: {message}',
+        installSuccess: 'Dependency {name} installed successfully',
+        installFailed: 'Failed to install dependency {name}: Server internal error.\n\n{details}',
+        requestError: 'Request error ({status})',
+        noResponse: 'No response from server, please check network connection or server status.',
+        unknownError: 'Unknown error',
+        noMissingDeps: 'No missing dependencies to install',
+        allDepsInstalled: 'All missing dependencies have been installed',
+        installFailedGeneric: 'Failed to install dependencies: {message}',
+        selectPluginFirst: 'Please select a plugin first',
+        pluginNotFound: 'Selected plugin not found',
+        noMissingDepsForPlugin: 'Selected plugin has no missing dependencies to install',
+        pluginDepsInstalled: 'All missing dependencies for plugin {name} have been installed',
+        serverNoDetails: 'Server did not provide detailed error information.'
+      }
     }
   },
   comfyuiStatus: {
@@ -229,6 +245,20 @@ export default {
     gpuMode: {
       independent: 'Standalone Mode',
       shared: 'Shared Mode'
+    },
+    messages: {
+      missingModelsWarning: 'Missing essential models, will still start ComfyUI',
+      starting: 'ComfyUI is starting, please wait...',
+      startFailed: 'Failed to start ComfyUI',
+      stopped: 'ComfyUI has stopped',
+      stopFailed: 'Failed to stop ComfyUI',
+      logsUnavailable: 'Unable to get log data',
+      logsFailed: 'Failed to get logs, please try again later',
+      resourcePackInstalled: '{name} installed successfully!',
+      resourcePackFailed: 'Installation failed: {error}',
+      noLogsToDownload: 'No logs available for download',
+      unknownError: 'Unknown error',
+      resourcePack: 'Resource pack'
     }
   },
   modelsPage: {
@@ -730,6 +760,31 @@ export default {
     customDirLabel: 'Directory Name',
     customDirHint: 'Enter a custom directory name',
     customDirRequired: 'Please enter a directory name',
-    allFieldsRequired: 'Please fill in all required fields'
+    allFieldsRequired: 'Please fill in all required fields',
+    errors: {
+      invalidResponseData: 'Invalid response data: missing task ID',
+      downloadFailed: 'Download failed: {error}',
+      downloadCancelled: 'Download cancelled',
+      cancelFailed: 'Failed to cancel download: {error}',
+      downloadCompleted: 'Model download completed',
+      downloadError: 'Download failed: {error}',
+      unknownError: 'Unknown error'
+    }
+  },
+  essentialModels: {
+    errors: {
+      getModelsListFailed: 'Unable to get essential models list',
+      downloadCompleted: 'All essential models have been downloaded',
+      downloadError: 'Download error: {error}',
+      getProgressFailed: 'Failed to get progress: {error}',
+      downloadStarted: 'Started downloading essential models collection',
+      downloadStartedNotify: 'Started downloading essential models',
+      noTaskId: 'Server did not return a valid task ID',
+      startDownloadFailed: 'Failed to start download: {error}',
+      userCancelled: 'User cancelled download',
+      cancelFailed: 'Failed to cancel download: {error}',
+      confirmClose: 'Confirm Close',
+      closeWhileDownloading: 'Download is in progress. Closing the dialog will continue downloading in the background. Are you sure you want to close?'
+    }
   }
 };

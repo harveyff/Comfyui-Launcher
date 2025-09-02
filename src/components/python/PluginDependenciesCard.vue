@@ -106,6 +106,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted, reactive } from 'vue';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import { analyzePluginDependencies as apiAnalyzeDeps, installPackage as apiInstallPackage } from 'src/api';
 
 export default defineComponent({
@@ -115,6 +116,7 @@ export default defineComponent({
   
   setup(props, { emit }) {
     const $q = useQuasar();
+    const { t } = useI18n();
     
     // Plugin dependencies analysis related
     const pluginDependencies = ref([]);
@@ -165,7 +167,7 @@ export default defineComponent({
       } catch (error) {
         $q.notify({
           color: 'negative',
-          message: '分析插件依赖失败: ' + error.message,
+          message: t('python.pluginDependencies.errors.analyzeFailed', { message: error.message }),
           icon: 'error'
         });
       } finally {
@@ -183,7 +185,7 @@ export default defineComponent({
         
         $q.notify({
           color: 'positive',
-          message: `依赖库 ${depName} 安装成功`,
+          message: t('python.pluginDependencies.errors.installSuccess', { name: depName }),
           icon: 'check'
         });
         
@@ -195,16 +197,19 @@ export default defineComponent({
         if (error.response) {
           // Response but status code is not 2xx
           if (error.response.status === 500) {
-            errorMsg = `安装依赖库 ${depName} 失败：服务器内部错误。\n\n${error.response?.body?.error || error.response?.data?.message || '服务器未提供详细错误信息。'}`;
+            errorMsg = t('python.pluginDependencies.errors.installFailed', { 
+              name: depName, 
+              details: error.response?.body?.error || error.response?.data?.message || t('python.pluginDependencies.errors.serverNoDetails')
+            });
           } else {
-            errorMsg = error.response?.body?.error || error.response?.data?.message || `请求错误 (${error.response.status})`;
+            errorMsg = error.response?.body?.error || error.response?.data?.message || t('python.pluginDependencies.errors.requestError', { status: error.response.status });
           }
         } else if (error.request) {
           // Request sent but no response received
-          errorMsg = '未收到服务器响应，请检查网络连接或服务器状态。';
+          errorMsg = t('python.pluginDependencies.errors.noResponse');
         } else {
           // Other errors
-          errorMsg = error.message || '未知错误';
+          errorMsg = error.message || t('python.pluginDependencies.errors.unknownError');
         }
         
         // Send error to parent component
@@ -235,7 +240,7 @@ export default defineComponent({
         if (missingDeps.length === 0) {
           $q.notify({
             color: 'positive',
-            message: '没有缺失的依赖需要安装',
+            message: t('python.pluginDependencies.errors.noMissingDeps'),
             icon: 'check'
           });
           return;
@@ -248,13 +253,13 @@ export default defineComponent({
         
         $q.notify({
           color: 'positive',
-          message: '所有缺失的依赖已安装完成',
+          message: t('python.pluginDependencies.errors.allDepsInstalled'),
           icon: 'check'
         });
       } catch (error) {
         $q.notify({
           color: 'negative',
-          message: '安装依赖失败: ' + error.message,
+          message: t('python.pluginDependencies.errors.installFailedGeneric', { message: error.message }),
           icon: 'error'
         });
       } finally {
@@ -270,7 +275,7 @@ export default defineComponent({
         if (!selectedPlugin.value) {
           $q.notify({
             color: 'warning',
-            message: '请先选择一个插件',
+            message: t('python.pluginDependencies.errors.selectPluginFirst'),
             icon: 'warning'
           });
           return;
@@ -281,7 +286,7 @@ export default defineComponent({
         if (!plugin) {
           $q.notify({
             color: 'warning',
-            message: '未找到所选插件',
+            message: t('python.pluginDependencies.errors.pluginNotFound'),
             icon: 'warning'
           });
           return;
@@ -292,7 +297,7 @@ export default defineComponent({
         if (missingDeps.length === 0) {
           $q.notify({
             color: 'positive',
-            message: '所选插件没有缺失的依赖需要安装',
+            message: t('python.pluginDependencies.errors.noMissingDepsForPlugin'),
             icon: 'check'
           });
           return;
@@ -305,13 +310,13 @@ export default defineComponent({
         
         $q.notify({
           color: 'positive',
-          message: `插件 ${selectedPlugin.value} 的所有缺失依赖已安装完成`,
+          message: t('python.pluginDependencies.errors.pluginDepsInstalled', { name: selectedPlugin.value }),
           icon: 'check'
         });
       } catch (error) {
         $q.notify({
           color: 'negative',
-          message: '安装依赖失败: ' + error.message,
+          message: t('python.pluginDependencies.errors.installFailedGeneric', { message: error.message }),
           icon: 'error'
         });
       } finally {

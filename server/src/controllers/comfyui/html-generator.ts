@@ -8,7 +8,7 @@ export const getNotRunningHtml = () => {
   <!DOCTYPE html>
   <html>
   <head>
-    <title>ComfyUI 不可用 | ComfyUI Unavailable</title>
+    <title id="page-title">ComfyUI Unavailable</title>
     <meta charset="utf-8">
     <style>
       body {
@@ -102,6 +102,12 @@ export const getNotRunningHtml = () => {
         document.querySelectorAll('.' + lang).forEach(el => {
           el.style.display = 'block';
         });
+        
+        // 设置对应语言的页面标题
+        const pageTitle = document.getElementById('page-title');
+        if (pageTitle) {
+          pageTitle.textContent = lang === 'zh' ? 'ComfyUI 不可用' : 'ComfyUI Unavailable';
+        }
 
         // 检查当前域名是否为管理员域名
         const currentHostname = window.location.hostname;

@@ -1,4 +1,19 @@
 {
   "hello": "Hello",
-  "welcome": "Welcome to ComfyUI Launcher"
+  "welcome": "Welcome to ComfyUI Launcher",
+  "comfyui": {
+    "start": {
+      "already_running": "ComfyUI is already running",
+      "started": "ComfyUI has been started",
+      "failed_timeout": "ComfyUI startup failed or timed out",
+      "failed": "Startup failed: {{message}}"
+    },
+    "stop": {
+      "already_stopped": "ComfyUI is already stopped",
+      "stopped": "ComfyUI stopped successfully",
+      "stopped_force": "ComfyUI stopped successfully (forced)",
+      "failed": "Unable to stop ComfyUI",
+      "error": "Error occurred while stopping ComfyUI"
+    }
+  }
 } 

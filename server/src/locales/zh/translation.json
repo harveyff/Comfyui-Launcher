@@ -1,4 +1,19 @@
 {
   "hello": "你好",
-  "welcome": "欢迎使用ComfyUI管理器"
+  "welcome": "欢迎使用ComfyUI管理器",
+  "comfyui": {
+    "start": {
+      "already_running": "ComfyUI已经在运行中",
+      "started": "ComfyUI已启动",
+      "failed_timeout": "ComfyUI启动失败或超时",
+      "failed": "启动失败: {{message}}"
+    },
+    "stop": {
+      "already_stopped": "ComfyUI已经停止",
+      "stopped": "ComfyUI停止成功",
+      "stopped_force": "ComfyUI停止成功（强制）",
+      "failed": "无法停止ComfyUI",
+      "error": "停止ComfyUI时发生错误"
+    }
+  }
 } 
